@@ -134,8 +134,24 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Atualizações Recentes
 
+- **03/12/2024**: Sistema profissional de orçamentos em PDF com logo Emunah e mensagem bíblica
+- **03/12/2024**: Compartilhamento de orçamentos via WhatsApp com mensagem formatada
+- **03/12/2024**: Envio de orçamento por email com PDF anexo
 - **03/12/2024**: Refatoração do modelo Quote para suportar leads sem cadastro
 - **03/12/2024**: Fluxo de aprovação de cotação com criação automática de pedido
 - **03/12/2024**: Melhorias nas templates de cotações e pedidos
 - **03/12/2024**: Configuração de credenciais via variáveis de ambiente
 - **03/12/2024**: Logos EMUNAH copiados para static/images/
+
+## Funcionalidades de PDF e Compartilhamento
+
+O sistema agora permite:
+1. **Baixar PDF profissional** do orçamento com:
+   - Logo Emunah no cabeçalho
+   - Dados completos do cliente e produtos
+   - Informações de pagamento e PIX
+   - Mensagem bíblica no rodapé ("Tudo posso naquele que me fortalece" - Filipenses 4:13)
+
+2. **Enviar via WhatsApp** - Abre o WhatsApp com mensagem formatada contendo todos os detalhes do orçamento
+
+3. **Enviar por Email** - Envia email com o PDF anexado (requer configuração SMTP)
