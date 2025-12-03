@@ -1,0 +1,255 @@
+Título do projeto: Emunah — Sistema de Vendas e Orçamentos de Camisetas
+
+Descrição curta: Plataforma web (SPA) + API para gerenciar fornecedores, cotações, orçamentos, clientes, estampas, pedidos e métricas (gráficos de faturamento, conversão e desempenho). Interface com identidade visual Emunah (borgonha, areia, creme) conforme o material da marca. 
+
+PROJETO EMUNAH
+
+Requisitos funcionais (alto nível)
+
+Autenticação: Admin (proprietário), Vendedor, Comprador/Cliente, Fornecedor.
+
+Dashboard (admin/vendedor) com métricas:
+
+Faturamento total por período (dia/semana/mês/ano).
+
+Pedidos por status (cotação, aprovado, em produção, enviado, entregue).
+
+Ticket médio, conversão de orçamentos -> pedidos.
+
+Gráfico de receita acumulada e comparação mês a mês.
+
+Cadastro de Fornecedores:
+
+Nome, contato, email, telefone, endereço, meio de pagamento, tempo médio de produção, observações.
+
+Histórico de cotações enviadas/recebidas.
+
+Módulo de Cotações:
+
+Criar cotação para fornecedores (itens: modelo da camiseta, cor, tamanho, quantidade, impressão, posição da estampa, tamanho da estampa).
+
+Enviar por email (ou notificação) ao fornecedor; receber resposta com preço e prazo.
+
+Registrar resposta e comparar cotações (melhor preço/prazo).
+
+Orçamentos (para cliente):
+
+Gerar orçamento a partir de cotação aprovada.
+
+Mostrar valor total, sinal (campo), forma de pagamento, e campo PIX preenchido (usar o número do PIX do proprietário).
+
+Permitir enviar orçamento por email em PDF (layout conforme modelo de orçamento enviado).
+
+Gestão de Estampas:
+
+Upload de imagens PNG/SVG/JPEG.
+
+Campos: nome da estampa, descrição, cores (lista), áreas de aplicação (peito, costas, manga), dimensões recomendadas.
+
+Visualizador e miniatura; marcar estampas como ativas/inativas.
+
+Catálogo de Produtos (camisetas):
+
+Modelo (ex.: camiseta básica, gola careca), cores (usar paleta Emunah), tamanhos, preço base, estoque.
+
+Pedidos e Produção:
+
+Converter orçamento aprovado em pedido.
+
+Status de produção com atualização por fornecedor/produção.
+
+Geração de etiquetas e nota simples de produção.
+
+Relatórios e Export:
+
+Exportar relatórios CSV/PDF de vendas, cotações, fornecedores.
+
+Perfis de Comprador:
+
+Cadastro de clientes (nome, CNPJ/CPF, email, telefone, endereço de entrega).
+
+Notificações:
+
+Emails automáticos (cotação enviada, cotação respondida, orçamento enviado, pedido aprovado, pedido enviado).
+
+Internacionalização (pt-BR).
+
+Segurança:
+
+Hash de senha (bcrypt), roles, validação de uploads, proteção CSRF se for server-rendered.
+
+Deploy:
+
+Deploy simples em Replit/Render/Heroku; instruções no README.
+
+Requisitos técnicos (sugestão)
+
+Frontend: React (Vite) ou Next.js (app router opcional) — SPA com componentes, charts com Recharts ou Chart.js.
+
+Backend: Node.js + Express ou Fastify OR Django Rest Framework (se preferir Python). Recomendo Node + Express + TypeScript para agilidade.
+
+DB: PostgreSQL (produção) / SQLite (dev).
+
+Autenticação: JWT + refresh tokens.
+
+Armazenamento de imagens: local (dev) ou S3-compatible.
+
+Emails: SMTP (SendGrid / Mailgun) ou serviço de desenvolvimento (ethereal).
+
+Gráficos: Chart.js ou Recharts (no React).
+
+Geração de PDF (ficha/orçamento): Puppeteer ou PDFKit.
+
+Testes: unitários básicos com Jest.
+
+CI: GitHub Actions (opcional).
+
+Modelos de dados (simplificado)
+
+User
+
+id, nome, email, senha_hash, role (admin|vendedor|fornecedor|cliente), telefone, created_at
+
+Fornecedor
+
+id, user_id, nome_fantasia, cnpj, contato_nome, email, telefone, endereco, tempo_producao_dias, observacoes
+
+Produto (Camiseta)
+
+id, nome, modelo, cor, tamanhos_disponiveis (array), preco_base, estoque, imagem
+
+Estampa
+
+id, nome, descricao, arquivo_url, cores, dimensoes_recomendadas, posicoes (array), ativo (bool)
+
+Cotacao
+
+id, solicitante_id (vendedor), fornecedor_id, items [{produto_id, quantidade, estampa_id, posição, dimensao}], status (enviada/respondida/recusada), resposta [{preco_unit, prazo_dias, observacao}], criado_em
+
+Orcamento
+
+id, cliente_id, cotacao_id, valor_total, sinal, pix_numero, validade (data), status (enviado/aceito/cancelado), pdf_url
+
+Pedido
+
+id, orcamento_id, status_producao, data_entrega_prevista, rastreamento
+
+Transacao
+
+id, pedido_id, metodo_pagamento, valor, data
+
+Endpoints API (exemplos principais)
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+GET /api/dashboard/metrics?from=&to=
+
+POST /api/fornecedores
+
+GET /api/fornecedores
+
+POST /api/cotacoes
+
+POST /api/cotacoes/:id/send-to-fornecedor
+
+POST /api/cotacoes/:id/respond (fornecedor)
+
+POST /api/orcamentos (gera PDF)
+
+GET /api/orcamentos/:id/download
+
+POST /api/pedidos (converter orçamento)
+
+GET /api/estampas
+
+POST /api/estampas (upload)
+
+GET /api/relatorios/vendas?period=
+
+UI / UX (design)
+
+Use a paleta Emunah: Borgonha (#520B1B) para headers e botões primários, Areia (#C5A995) para fundos e painéis, Creme Suave (#E5D2C4) para campos/níveis secundários. Referência de design no PDF (page 1-2). 
+
+PROJETO EMUNAH
+
+Layout: sidebar à esquerda (Dashboard, Pedidos, Orçamentos, Cotações, Fornecedores, Estampas, Clientes, Relatórios, Configurações).
+
+Página de orçamento: visual limpo, com logo Emunah no topo, campos para PIX e observações (incluir seu número PIX armazenado nas configurações da empresa).
+
+Tela de criação de cotação: formulário com pré-visualização do mockup da camiseta (onde aplica a estampa).
+
+Responsividade: mobile-first, boa experiência em tablet.
+
+Métricas e gráficos (detalhe)
+
+Gráfico de barras: faturamento por mês (últimos 12 meses).
+
+Gráfico de linhas: receita acumulada no período selecionado.
+
+Pie chart: % vendas por modelo de camiseta.
+
+Tabela: top 5 fornecedores por custo médio e prazo médio.
+
+KPI cards: faturamento do período, pedidos concluídos, orçamentos pendentes, ticket médio.
+
+Calcule conversão = pedidos aprovados / orçamentos enviados.
+
+Integração PIX & PDF
+
+Em configurações da empresa, campo pix_key (ex.: 11998896725). Ao gerar orçamento, incluir automaticamente instruções de pagamento e QR-code (pode gerar QR-code com biblioteca qrcode apontando para pix_key).
+
+Geração de PDF com layout similar ao seu modelo de orçamento (incluir logo, campos: quantidade, valor unitário, valor total, sinal, validade, PIX e observações).
+
+Fluxo sugerido (user stories)
+
+Vendedor cria cotação -> seleciona fornecedor(s) -> envia.
+
+Fornecedor responde com preço/prazo -> vendedor compara -> aprova melhor.
+
+Vendedor gera orçamento para cliente com cotações aprovadas -> envia PDF por email (com PIX).
+
+Cliente aceita e paga sinal -> vendedor converte em pedido -> produção inicia com fornecedor selecionado.
+
+Dashboard mostra faturamento e status.
+
+Melhorias sugeridas / extras
+
+Módulo de controle de estoques (sincronizar com produção).
+
+Upload de provas (mockups de estampa aplicadas nas camisetas).
+
+Painel de notificação por WhatsApp (integração opcional).
+
+Histórico de margem por pedido (venda - custo fornecedor).
+
+Permissão para múltiplos PIX ou integração com gateway de pagamento (opcional).
+
+Instruções para executar (README resumido)
+
+Clonar repositório.
+
+Copiar .env.example → .env com DB, SMTP, JWT_SECRET, PIX_KEY.
+
+npm install / pnpm install
+
+npm run dev (frontend e backend com proxy ou monorepo).
+
+Rodar migrations npm run migrate.
+
+Criar usuário admin via script npm run seed-admin.
+
+Acessar /admin e configurar PIX e dados da empresa.
+
+Critérios de aceitação (QA)
+
+Criar cotação e enviar para fornecedor funciona (email simulado).
+
+Resposta do fornecedor atualiza cotação e aparece na tela de comparação.
+
+Orçamento pode ser gerado em PDF com QR-code PIX e enviado por email.
+
+Dashboard exibe as métricas corretas (testar com dados sintéticos).
+
+Upload de estampas armazena arquivos e mostra preview.
