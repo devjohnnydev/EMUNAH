@@ -2,6 +2,8 @@ import os
 import smtplib
 import logging
 import uuid
+import base64
+import qrcode
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response, make_response
@@ -70,6 +72,81 @@ def delete_quote_image(image_path):
         full_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', image_path)
         if os.path.exists(full_path):
             os.remove(full_path)
+
+
+def generate_pix_qrcode(pix_key, amount=None, name="Emunah", city="Sao Paulo", description=""):
+    """Generate PIX QR Code as base64 string"""
+    def crc16_ccitt(data):
+        crc = 0xFFFF
+        for byte in data.encode('utf-8'):
+            crc ^= byte << 8
+            for _ in range(8):
+                if crc & 0x8000:
+                    crc = (crc << 1) ^ 0x1021
+                else:
+                    crc <<= 1
+                crc &= 0xFFFF
+        return format(crc, '04X')
+    
+    def format_emv(id_code, value):
+        return f"{id_code}{len(value):02d}{value}"
+    
+    pix_key_clean = ''.join(filter(str.isdigit, pix_key)) if pix_key.replace('+', '').isdigit() else pix_key
+    
+    gui = format_emv("00", "BR.GOV.BCB.PIX")
+    chave = format_emv("01", pix_key_clean)
+    if description:
+        desc_clean = description[:25].replace(" ", "")
+        desc_field = format_emv("02", desc_clean)
+        merchant_account = format_emv("26", gui + chave + desc_field)
+    else:
+        merchant_account = format_emv("26", gui + chave)
+    
+    payload_format = format_emv("00", "01")
+    merchant_category = format_emv("52", "0000")
+    currency = format_emv("53", "986")
+    
+    amount_field = ""
+    if amount and float(amount) > 0:
+        amount_str = f"{float(amount):.2f}"
+        amount_field = format_emv("54", amount_str)
+    
+    country = format_emv("58", "BR")
+    
+    name_clean = name[:25].upper()
+    for char in ['Á', 'À', 'Ã', 'Â', 'É', 'È', 'Ê', 'Í', 'Ì', 'Î', 'Ó', 'Ò', 'Õ', 'Ô', 'Ú', 'Ù', 'Û', 'Ç']:
+        replacement = {'Á': 'A', 'À': 'A', 'Ã': 'A', 'Â': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 
+                      'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ó': 'O', 'Ò': 'O', 'Õ': 'O', 'Ô': 'O',
+                      'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ç': 'C'}.get(char, char)
+        name_clean = name_clean.replace(char, replacement)
+    merchant_name = format_emv("59", name_clean)
+    
+    city_clean = city[:15].upper()
+    for char in ['Á', 'À', 'Ã', 'Â', 'É', 'È', 'Ê', 'Í', 'Ì', 'Î', 'Ó', 'Ò', 'Õ', 'Ô', 'Ú', 'Ù', 'Û', 'Ç']:
+        replacement = {'Á': 'A', 'À': 'A', 'Ã': 'A', 'Â': 'A', 'É': 'E', 'È': 'E', 'Ê': 'E', 
+                      'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ó': 'O', 'Ò': 'O', 'Õ': 'O', 'Ô': 'O',
+                      'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ç': 'C'}.get(char, char)
+        city_clean = city_clean.replace(char, replacement)
+    merchant_city = format_emv("60", city_clean)
+    
+    additional_data = format_emv("62", format_emv("05", "***"))
+    
+    payload_without_crc = payload_format + merchant_account + merchant_category + currency + amount_field + country + merchant_name + merchant_city + additional_data + "6304"
+    crc = crc16_ccitt(payload_without_crc)
+    payload = payload_without_crc + crc
+    
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=10, border=4)
+    qr.add_data(payload)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="#520B1B", back_color="white")
+    
+    buffer = BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    
+    return f"data:image/png;base64,{qr_base64}"
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -899,7 +976,25 @@ def download_quote_pdf(id):
     
     logo_url = f"file://{logo_path}"
     
-    html_content = render_template('quote_pdf.html', quote=quote, logo_path=logo_url)
+    pix_qr_code = generate_pix_qrcode(
+        pix_key=quote.pix_key or '11998896725',
+        amount=float(quote.down_payment_value) if quote.down_payment_value else None,
+        name="Emunah",
+        city="Sao Paulo",
+        description=f"ORC{quote.quote_number}"
+    )
+    
+    quote_image_url = None
+    if quote.image_path:
+        quote_image_path = os.path.join(app.root_path, 'static', quote.image_path)
+        if os.path.exists(quote_image_path):
+            quote_image_url = f"file://{quote_image_path}"
+    
+    html_content = render_template('quote_pdf.html', 
+                                   quote=quote, 
+                                   logo_path=logo_url,
+                                   pix_qr_code=pix_qr_code,
+                                   quote_image_url=quote_image_url)
     
     pdf_buffer = BytesIO()
     HTML(string=html_content, base_url=app.root_path).write_pdf(pdf_buffer)

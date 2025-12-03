@@ -217,9 +217,35 @@
         .payment-section {
             background-color: #520B1B;
             color: #fff;
-            padding: 15px 20px;
+            padding: 20px;
             border-radius: 8px;
             margin-bottom: 25px;
+        }
+        
+        .payment-content {
+            display: table;
+            width: 100%;
+        }
+        
+        .payment-info {
+            display: table-cell;
+            vertical-align: middle;
+            width: 60%;
+        }
+        
+        .payment-qr {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            width: 40%;
+        }
+        
+        .payment-qr img {
+            max-width: 150px;
+            height: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
         }
         
         .payment-section h4 {
@@ -240,6 +266,19 @@
             border-radius: 4px;
             display: inline-block;
             margin-top: 5px;
+        }
+        
+        /* Reference Image */
+        .reference-image-section {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .reference-image-section img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 8px;
+            border: 2px solid #E5D2C4;
         }
         
         /* Delivery Info */
@@ -481,14 +520,32 @@
             </div>
         </div>
         
+        <!-- Reference Image -->
+        {% if quote_image_url %}
+        <div class="reference-image-section">
+            <h3 class="section-title">Imagem de Referência</h3>
+            <img src="{{ quote_image_url }}" alt="Imagem de referência do produto">
+        </div>
+        {% endif %}
+        
         <!-- Payment Info -->
         <div class="payment-section">
-            <h4>💳 Informações de Pagamento</h4>
-            <p>Para confirmar seu pedido, efetue o pagamento do sinal via PIX:</p>
-            <p class="pix-key">{{ quote.pix_key }}</p>
-            <p style="margin-top: 10px; font-size: 9pt; opacity: 0.9;">
-                O valor restante deverá ser pago no ato da {{ 'entrega' if quote.delivery_method == 'delivery' else 'retirada' }}.
-            </p>
+            <div class="payment-content">
+                <div class="payment-info">
+                    <h4>💳 Informações de Pagamento</h4>
+                    <p>Para confirmar seu pedido, efetue o pagamento do sinal via PIX:</p>
+                    <p class="pix-key">{{ quote.pix_key }}</p>
+                    <p style="margin-top: 10px; font-size: 9pt; opacity: 0.9;">
+                        O valor restante deverá ser pago no ato da {{ 'entrega' if quote.delivery_method == 'delivery' else 'retirada' }}.
+                    </p>
+                </div>
+                {% if pix_qr_code %}
+                <div class="payment-qr">
+                    <img src="{{ pix_qr_code }}" alt="QR Code PIX">
+                    <p style="font-size: 8pt; margin-top: 5px;">Escaneie para pagar</p>
+                </div>
+                {% endif %}
+            </div>
         </div>
         
         <!-- Delivery Info -->
