@@ -14,6 +14,7 @@ import Quotes from "@/pages/Quotes";
 import Budgets from "@/pages/Budgets";
 import Suppliers from "@/pages/Suppliers";
 import Prints from "@/pages/Prints";
+import Orders from "@/pages/Orders";
 
 function ProtectedRoute({ component: Component, ...rest }: any) {
   const { user, isLoading } = useAuth();
@@ -56,11 +57,11 @@ function Router() {
       <Route path="/prints">
         <ProtectedRoute component={Prints} />
       </Route>
+      <Route path="/orders">
+        <ProtectedRoute component={Orders} />
+      </Route>
       
       {/* Placeholders */}
-      <Route path="/orders">
-        <ProtectedRoute component={Dashboard} />
-      </Route>
       <Route path="/clients">
         <ProtectedRoute component={Dashboard} />
       </Route>
