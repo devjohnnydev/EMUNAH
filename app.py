@@ -1,6 +1,7 @@
 import os
 import smtplib
 import logging
+import uuid
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response, make_response
@@ -11,6 +12,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 from decimal import Decimal
 import json
@@ -36,6 +38,38 @@ app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() == '
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@emunah.com')
+
+# Upload configuration
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads', 'quotes')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB max file size
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+# Create upload folder if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_quote_image(file, quote_id):
+    """Save uploaded image for a quote and return the relative path"""
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        ext = filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"quote_{quote_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        file.save(filepath)
+        return f"uploads/quotes/{unique_filename}"
+    return None
+
+def delete_quote_image(image_path):
+    """Delete a quote image file"""
+    if image_path:
+        full_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', image_path)
+        if os.path.exists(full_path):
+            os.remove(full_path)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -167,6 +201,10 @@ class Quote(db.Model):
     # Validity
     valid_until = db.Column(db.DateTime)
     
+    # Image and reference URL
+    reference_url = db.Column(db.String(500))  # External link/URL
+    image_path = db.Column(db.String(500))     # Path to uploaded image
+    
     # Timestamps
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -226,6 +264,9 @@ class Order(db.Model):
     delivery_date_estimated = db.Column(db.DateTime)
     delivery_date_actual = db.Column(db.DateTime)
     tracking_code = db.Column(db.String(100))
+    
+    # Reference URL
+    reference_url = db.Column(db.String(500))  # External link/URL
     
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -654,10 +695,21 @@ def new_quote():
             valid_until=datetime.utcnow() + timedelta(days=15),
             status='draft',
             items=[],
-            notes=request.form.get('notes')
+            notes=request.form.get('notes'),
+            reference_url=request.form.get('reference_url')
         )
         db.session.add(quote)
         db.session.commit()
+        
+        # Handle image upload after quote is created (to get the ID)
+        if 'quote_image' in request.files:
+            file = request.files['quote_image']
+            if file and file.filename:
+                image_path = save_quote_image(file, quote.id)
+                if image_path:
+                    quote.image_path = image_path
+                    db.session.commit()
+        
         flash('Cotação criada com sucesso!', 'success')
         return redirect(url_for('view_quote', id=quote.id))
     
@@ -715,6 +767,25 @@ def edit_quote(id):
             quote.delivery_date_estimated = datetime.utcnow() + timedelta(days=quote.delivery_days)
         quote.status = request.form.get('status', quote.status)
         quote.notes = request.form.get('notes')
+        quote.reference_url = request.form.get('reference_url')
+        
+        # Handle image upload
+        if 'quote_image' in request.files:
+            file = request.files['quote_image']
+            if file and file.filename:
+                # Delete old image if exists
+                if quote.image_path:
+                    delete_quote_image(quote.image_path)
+                # Save new image
+                image_path = save_quote_image(file, quote.id)
+                if image_path:
+                    quote.image_path = image_path
+        
+        # Handle image deletion
+        if request.form.get('delete_image') == '1' and quote.image_path:
+            delete_quote_image(quote.image_path)
+            quote.image_path = None
+        
         db.session.commit()
         flash('Cotação atualizada com sucesso!', 'success')
         return redirect(url_for('view_quote', id=quote.id))
@@ -774,7 +845,8 @@ def approve_quote(id):
         paid_value=quote.down_payment_value or 0,
         delivery_method=quote.delivery_method,
         delivery_date_estimated=quote.delivery_date_estimated,
-        notes=quote.notes
+        notes=quote.notes,
+        reference_url=quote.reference_url
     )
     db.session.add(order)
     
