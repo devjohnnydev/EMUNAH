@@ -46,7 +46,16 @@ python app.py
 
 ### Acessar o sistema
 - URL local: http://localhost:5000
-- Credenciais padrão: admin@emunah.com / 123456
+
+### Primeiro Acesso (Produção)
+O sistema cria automaticamente um usuário administrador inicial quando não há usuários no banco de dados.
+**IMPORTANTE**: Após o primeiro login, altere imediatamente a senha do administrador através da gestão de usuários.
+
+Para configurar credenciais personalizadas, defina as variáveis de ambiente antes do primeiro deploy:
+```
+ADMIN_EMAIL=seu-email@empresa.com
+ADMIN_PASSWORD=sua-senha-segura
+```
 
 ## Funcionalidades
 

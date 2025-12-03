@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Nova Transação{% endblock %}
-{% block header_title %}Nova Transação - {{ order.order_number }}{% endblock %}
+{% block title %}{{ 'Editar' if transaction else 'Nova' }} Transação{% endblock %}
+{% block header_title %}{{ 'Editar' if transaction else 'Nova' }} Transação - {{ order.order_number }}{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl">
@@ -25,15 +25,15 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Método de Pagamento *</label>
                         <select name="payment_method" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                            <option value="pix">PIX</option>
-                            <option value="credit">Cartão de Crédito</option>
-                            <option value="boleto">Boleto</option>
-                            <option value="transfer">Transferência</option>
+                            <option value="pix" {{ 'selected' if transaction and transaction.payment_method == 'pix' else '' }}>PIX</option>
+                            <option value="credit" {{ 'selected' if transaction and transaction.payment_method == 'credit' else '' }}>Cartão de Crédito</option>
+                            <option value="boleto" {{ 'selected' if transaction and transaction.payment_method == 'boleto' else '' }}>Boleto</option>
+                            <option value="transfer" {{ 'selected' if transaction and transaction.payment_method == 'transfer' else '' }}>Transferência</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Valor (R$) *</label>
-                        <input type="number" name="amount" step="0.01" required
+                        <input type="number" name="amount" step="0.01" required value="{{ transaction.amount if transaction else '' }}"
                             class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
                     </div>
                 </div>
@@ -41,22 +41,22 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
                     <select name="status" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                        <option value="pending">Pendente</option>
-                        <option value="confirmed">Confirmado</option>
-                        <option value="cancelled">Cancelado</option>
+                        <option value="pending" {{ 'selected' if transaction and transaction.status == 'pending' else '' }}>Pendente</option>
+                        <option value="confirmed" {{ 'selected' if transaction and transaction.status == 'confirmed' else '' }}>Confirmado</option>
+                        <option value="cancelled" {{ 'selected' if transaction and transaction.status == 'cancelled' else '' }}>Cancelado</option>
                     </select>
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Observações</label>
                     <textarea name="notes" rows="3"
-                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"></textarea>
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">{{ transaction.notes if transaction else '' }}</textarea>
                 </div>
             </div>
             
             <div class="flex gap-3 mt-6">
                 <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
-                    Registrar Transação
+                    {{ 'Atualizar' if transaction else 'Registrar' }} Transação
                 </button>
                 <a href="{{ url_for('transactions', order_id=order.id) }}" class="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
                     Cancelar

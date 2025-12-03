@@ -376,6 +376,16 @@ def edit_quote(id):
     suppliers_list = Supplier.query.all()
     return render_template('quote_form.html', quote=quote, clients=clients, suppliers=suppliers_list)
 
+@app.route('/quotes/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_quote(id):
+    quote = Quote.query.get_or_404(id)
+    Budget.query.filter_by(quote_id=id).delete()
+    db.session.delete(quote)
+    db.session.commit()
+    flash('Cotação excluída com sucesso!', 'success')
+    return redirect(url_for('quotes'))
+
 @app.route('/budgets')
 @login_required
 def budgets():
@@ -432,6 +442,16 @@ def edit_budget(id):
     clients = Client.query.all()
     return render_template('budget_form.html', budget=budget, quotes=quotes_list, clients=clients)
 
+@app.route('/budgets/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_budget(id):
+    budget = Budget.query.get_or_404(id)
+    Order.query.filter_by(budget_id=id).delete()
+    db.session.delete(budget)
+    db.session.commit()
+    flash('Orçamento excluído com sucesso!', 'success')
+    return redirect(url_for('budgets'))
+
 @app.route('/orders')
 @login_required
 def orders():
@@ -485,6 +505,16 @@ def edit_order(id):
     clients = Client.query.all()
     suppliers_list = Supplier.query.all()
     return render_template('order_form.html', order=order, budgets=budgets_list, clients=clients, suppliers=suppliers_list)
+
+@app.route('/orders/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_order(id):
+    order = Order.query.get_or_404(id)
+    Transaction.query.filter_by(order_id=id).delete()
+    db.session.delete(order)
+    db.session.commit()
+    flash('Pedido excluído com sucesso!', 'success')
+    return redirect(url_for('orders'))
 
 @app.route('/clients')
 @login_required
@@ -621,6 +651,97 @@ def new_transaction(order_id):
         return redirect(url_for('transactions', order_id=order_id))
     return render_template('transaction_form.html', transaction=None, order=order)
 
+@app.route('/orders/<int:order_id>/transactions/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_transaction(order_id, id):
+    order = Order.query.get_or_404(order_id)
+    transaction = Transaction.query.get_or_404(id)
+    if request.method == 'POST':
+        transaction.payment_method = request.form.get('payment_method')
+        transaction.amount = float(request.form.get('amount', 0))
+        transaction.status = request.form.get('status', 'pending')
+        transaction.notes = request.form.get('notes')
+        db.session.commit()
+        flash('Transação atualizada com sucesso!', 'success')
+        return redirect(url_for('transactions', order_id=order_id))
+    return render_template('transaction_form.html', transaction=transaction, order=order)
+
+@app.route('/orders/<int:order_id>/transactions/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_transaction(order_id, id):
+    transaction = Transaction.query.get_or_404(id)
+    db.session.delete(transaction)
+    db.session.commit()
+    flash('Transação excluída com sucesso!', 'success')
+    return redirect(url_for('transactions', order_id=order_id))
+
+@app.route('/users')
+@login_required
+def users():
+    if current_user.role != 'ADMIN':
+        flash('Acesso não autorizado', 'error')
+        return redirect(url_for('dashboard'))
+    users_list = User.query.order_by(User.created_at.desc()).all()
+    return render_template('users.html', users=users_list)
+
+@app.route('/users/new', methods=['GET', 'POST'])
+@login_required
+def new_user():
+    if current_user.role != 'ADMIN':
+        flash('Acesso não autorizado', 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        existing = User.query.filter_by(email=request.form.get('email')).first()
+        if existing:
+            flash('Email já cadastrado', 'error')
+            return render_template('user_form.html', user=None)
+        user = User(
+            name=request.form.get('name'),
+            email=request.form.get('email'),
+            role=request.form.get('role', 'SELLER'),
+            phone=request.form.get('phone')
+        )
+        user.set_password(request.form.get('password'))
+        db.session.add(user)
+        db.session.commit()
+        flash('Usuário criado com sucesso!', 'success')
+        return redirect(url_for('users'))
+    return render_template('user_form.html', user=None)
+
+@app.route('/users/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_user(id):
+    if current_user.role != 'ADMIN':
+        flash('Acesso não autorizado', 'error')
+        return redirect(url_for('dashboard'))
+    user = User.query.get_or_404(id)
+    if request.method == 'POST':
+        user.name = request.form.get('name')
+        user.email = request.form.get('email')
+        user.role = request.form.get('role', 'SELLER')
+        user.phone = request.form.get('phone')
+        if request.form.get('password'):
+            user.set_password(request.form.get('password'))
+        db.session.commit()
+        flash('Usuário atualizado com sucesso!', 'success')
+        return redirect(url_for('users'))
+    return render_template('user_form.html', user=user)
+
+@app.route('/users/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_user(id):
+    if current_user.role != 'ADMIN':
+        flash('Acesso não autorizado', 'error')
+        return redirect(url_for('dashboard'))
+    user = User.query.get_or_404(id)
+    if user.id == current_user.id:
+        flash('Você não pode excluir seu próprio usuário', 'error')
+        return redirect(url_for('users'))
+    db.session.delete(user)
+    db.session.commit()
+    flash('Usuário excluído com sucesso!', 'success')
+    return redirect(url_for('users'))
+
 @app.route('/api/metrics')
 @login_required
 def api_metrics():
@@ -629,14 +750,21 @@ def api_metrics():
 def init_db():
     with app.app_context():
         db.create_all()
-        if not User.query.filter_by(email='admin@emunah.com').first():
+        admin_email = os.environ.get('ADMIN_EMAIL', 'admin@emunah.com')
+        admin_password = os.environ.get('ADMIN_PASSWORD', os.urandom(16).hex())
+        
+        if not User.query.filter_by(email=admin_email).first() and not User.query.first():
             admin = User(
                 name='Administrador',
-                email='admin@emunah.com',
+                email=admin_email,
                 role='ADMIN',
-                phone='11998896725'
+                phone=''
             )
-            admin.set_password('123456')
+            admin.set_password(admin_password)
+            print(f'Admin user created: {admin_email}')
+            if 'ADMIN_PASSWORD' not in os.environ:
+                print(f'Generated password: {admin_password}')
+                print('IMPORTANT: Set ADMIN_PASSWORD environment variable for production!')
             db.session.add(admin)
             
             supplier1 = Supplier(
