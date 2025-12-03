@@ -5,4 +5,4 @@ nixPkgs = ["python311", "pango", "fontconfig", "cairo", "gdk-pixbuf", "glib"]
 cmds = ["pip install -r requirements.txt"]
 
 [start]
-cmd = "python -c 'from app import init_db; init_db()' && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+cmd = "python database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"

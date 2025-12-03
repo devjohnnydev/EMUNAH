@@ -59,8 +59,15 @@ As credenciais são configuradas via variáveis de ambiente:
 │   ├── budgets.html, budget_form.html
 │   └── transactions.html
 ├── static/
-│   └── images/      # Logos EMUNAH
+│   ├── images/      # Logos EMUNAH
+│   └── uploads/quotes/  # Imagens de referência das cotações
+├── database/        # Scripts de banco de dados
+│   ├── init_db.sql      # Script SQL para criar tabelas
+│   ├── seed_data.sql    # Dados de exemplo
+│   ├── init_railway.py  # Script Python para Railway
+│   └── README.md        # Documentação
 ├── requirements.txt # Dependências Python
+├── nixpacks.toml    # Configuração Nixpacks (Railway)
 ├── railway.json     # Configuração Railway
 └── Procfile         # Comando de inicialização
 ```
