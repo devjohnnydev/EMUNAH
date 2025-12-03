@@ -3,7 +3,9 @@ import smtplib
 import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Response, make_response
+from urllib.parse import quote as url_quote
+from io import BytesIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_migrate import Migrate
@@ -794,6 +796,197 @@ def delete_quote(id):
     db.session.commit()
     flash('Cotação excluída com sucesso!', 'success')
     return redirect(url_for('quotes'))
+
+
+@app.route('/quotes/<int:id>/pdf')
+@login_required
+def download_quote_pdf(id):
+    """Generate and download quote as PDF"""
+    from weasyprint import HTML, CSS
+    
+    quote = Quote.query.get_or_404(id)
+    
+    logo_path = os.path.join(app.root_path, 'static', 'images', 'logo_emunah.png')
+    if not os.path.exists(logo_path):
+        logo_path = os.path.join(app.root_path, 'static', 'images', 'logo.png')
+    
+    logo_url = f"file://{logo_path}"
+    
+    html_content = render_template('quote_pdf.html', quote=quote, logo_path=logo_url)
+    
+    pdf_buffer = BytesIO()
+    HTML(string=html_content, base_url=app.root_path).write_pdf(pdf_buffer)
+    pdf_buffer.seek(0)
+    
+    filename = f"Orcamento_{quote.quote_number.replace('-', '_')}.pdf"
+    
+    response = make_response(pdf_buffer.read())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+
+@app.route('/quotes/<int:id>/whatsapp')
+@login_required
+def share_quote_whatsapp(id):
+    """Generate WhatsApp share link for quote"""
+    quote = Quote.query.get_or_404(id)
+    
+    client_name = quote.get_client_name()
+    client_phone = quote.get_client_phone()
+    
+    message = f"""🙏 *EMUNAH - Vista-se com propósito*
+
+Olá {client_name}! 
+
+Segue o orçamento solicitado:
+
+📋 *Orçamento #{quote.quote_number}*
+
+📦 *Produto:* {quote.model or 'Camiseta Personalizada'}
+🎨 *Cor:* {quote.shirt_color or 'A definir'}
+📐 *Quantidade:* {quote.total_quantity} peças
+
+💰 *Valor Total:* R$ {quote.total_price or 0:.2f}
+💳 *Sinal ({quote.down_payment_percent}%):* R$ {quote.down_payment_value or 0:.2f}
+📅 *Prazo:* {quote.delivery_days or 15} dias úteis
+
+🔑 *PIX para pagamento:* {quote.pix_key}
+
+O restante será pago na {'entrega' if quote.delivery_method == 'delivery' else 'retirada'}.
+
+✨ _"Tudo posso naquele que me fortalece." - Filipenses 4:13_
+
+Ficamos à disposição para qualquer dúvida!
+*Emunah* 🙏"""
+
+    encoded_message = url_quote(message)
+    
+    if client_phone:
+        phone = ''.join(filter(str.isdigit, client_phone))
+        if not phone.startswith('55'):
+            phone = '55' + phone
+        whatsapp_url = f"https://wa.me/{phone}?text={encoded_message}"
+    else:
+        whatsapp_url = f"https://wa.me/?text={encoded_message}"
+    
+    return redirect(whatsapp_url)
+
+
+@app.route('/quotes/<int:id>/email-pdf', methods=['POST'])
+@login_required
+def email_quote_pdf(id):
+    """Send quote PDF via email"""
+    from weasyprint import HTML
+    
+    quote = Quote.query.get_or_404(id)
+    client_email = quote.get_client_email()
+    
+    if not client_email:
+        flash('Cliente não possui email cadastrado.', 'error')
+        return redirect(url_for('view_quote', id=quote.id))
+    
+    logo_path = os.path.join(app.root_path, 'static', 'images', 'logo_emunah.png')
+    if not os.path.exists(logo_path):
+        logo_path = os.path.join(app.root_path, 'static', 'images', 'logo.png')
+    
+    logo_url = f"file://{logo_path}"
+    
+    html_content = render_template('quote_pdf.html', quote=quote, logo_path=logo_url)
+    
+    pdf_buffer = BytesIO()
+    HTML(string=html_content, base_url=app.root_path).write_pdf(pdf_buffer)
+    pdf_data = pdf_buffer.getvalue()
+    
+    subject = f"Emunah - Orçamento #{quote.quote_number}"
+    
+    email_html = f"""
+    <html>
+    <body style="font-family: 'Inter', Arial, sans-serif; background-color: #F5EDE6; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="color: #520B1B; font-family: 'Playfair Display', serif;">Emunah</h1>
+                <p style="color: #666;">Vista-se com propósito</p>
+            </div>
+            <h2 style="color: #520B1B;">Orçamento #{quote.quote_number}</h2>
+            <p>Olá {quote.get_client_name()},</p>
+            <p>Segue em anexo o orçamento solicitado.</p>
+            <div style="background: #F5EDE6; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p><strong>Valor Total:</strong> R$ {quote.total_price or 0:.2f}</p>
+                <p><strong>Sinal ({quote.down_payment_percent}%):</strong> R$ {quote.down_payment_value or 0:.2f}</p>
+                <p><strong>Prazo:</strong> {quote.delivery_days or 15} dias úteis</p>
+            </div>
+            <p><strong>PIX para pagamento:</strong> {quote.pix_key}</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="font-style: italic; color: #520B1B; text-align: center;">
+                "Tudo posso naquele que me fortalece." - Filipenses 4:13
+            </p>
+            <p style="color: #666; font-size: 12px; text-align: center;">
+                Emunah - Vista-se com propósito<br>
+                Contato: (11) 99889-6725
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
+        flash('Configuração de email não encontrada. Baixe o PDF e envie manualmente.', 'warning')
+        return redirect(url_for('view_quote', id=quote.id))
+    
+    try:
+        from email.mime.base import MIMEBase
+        from email import encoders
+        
+        msg = MIMEMultipart()
+        msg['Subject'] = subject
+        msg['From'] = app.config['MAIL_DEFAULT_SENDER']
+        msg['To'] = client_email
+        
+        msg.attach(MIMEText(email_html, 'html'))
+        
+        pdf_attachment = MIMEBase('application', 'pdf')
+        pdf_attachment.set_payload(pdf_data)
+        encoders.encode_base64(pdf_attachment)
+        pdf_attachment.add_header('Content-Disposition', f'attachment; filename="Orcamento_{quote.quote_number}.pdf"')
+        msg.attach(pdf_attachment)
+        
+        server = smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT'])
+        server.starttls()
+        server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        server.sendmail(app.config['MAIL_DEFAULT_SENDER'], client_email, msg.as_string())
+        server.quit()
+        
+        quote.status = 'sent'
+        quote.sent_at = datetime.utcnow()
+        db.session.commit()
+        
+        email_log = EmailLog(
+            recipient=client_email,
+            subject=subject,
+            email_type='quote_pdf',
+            status='sent'
+        )
+        db.session.add(email_log)
+        db.session.commit()
+        
+        flash(f'Orçamento enviado por email para {client_email} com sucesso!', 'success')
+        
+    except Exception as e:
+        logging.error(f"Failed to send email with PDF to {client_email}: {str(e)}")
+        email_log = EmailLog(
+            recipient=client_email,
+            subject=subject,
+            email_type='quote_pdf',
+            status='failed',
+            error_message=str(e)
+        )
+        db.session.add(email_log)
+        db.session.commit()
+        flash(f'Erro ao enviar email: {str(e)}. Baixe o PDF e envie manualmente.', 'error')
+    
+    return redirect(url_for('view_quote', id=quote.id))
 
 
 # ==================== ORDERS ====================

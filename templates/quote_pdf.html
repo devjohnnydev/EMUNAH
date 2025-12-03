@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Orçamento #{{ quote.quote_number }} - Emunah</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 0;
+        }
+        
+        /* Header with Logo */
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #520B1B;
+            margin-bottom: 25px;
+        }
+        
+        .logo-container {
+            margin-bottom: 10px;
+        }
+        
+        .logo-container img {
+            max-height: 80px;
+            width: auto;
+        }
+        
+        .company-name {
+            font-family: 'Georgia', serif;
+            font-size: 28pt;
+            color: #520B1B;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        
+        .company-slogan {
+            font-size: 10pt;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .document-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #520B1B;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .quote-number {
+            font-size: 12pt;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Info Section */
+        .info-section {
+            display: table;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .info-column {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 0 10px;
+        }
+        
+        .info-column:first-child {
+            padding-left: 0;
+        }
+        
+        .info-column:last-child {
+            padding-right: 0;
+        }
+        
+        .section-title {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #520B1B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #E5D2C4;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .info-table tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-table td {
+            padding: 8px 0;
+            vertical-align: top;
+        }
+        
+        .info-table td:first-child {
+            color: #666;
+            width: 45%;
+        }
+        
+        .info-table td:last-child {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        /* Items Table */
+        .items-section {
+            margin-bottom: 25px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .items-table th {
+            background-color: #520B1B;
+            color: #fff;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 10pt;
+        }
+        
+        .items-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #E5D2C4;
+        }
+        
+        .items-table tr:nth-child(even) {
+            background-color: #F5EDE6;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Totals */
+        .totals-section {
+            margin-bottom: 25px;
+        }
+        
+        .totals-box {
+            background-color: #F5EDE6;
+            border: 1px solid #E5D2C4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-left: 50%;
+        }
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .totals-table tr {
+            border-bottom: 1px solid #E5D2C4;
+        }
+        
+        .totals-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .totals-table td {
+            padding: 8px 0;
+        }
+        
+        .totals-table td:first-child {
+            color: #666;
+        }
+        
+        .totals-table td:last-child {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .total-final {
+            font-size: 14pt;
+            color: #520B1B;
+        }
+        
+        /* Payment Info */
+        .payment-section {
+            background-color: #520B1B;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .payment-section h4 {
+            margin-bottom: 10px;
+            font-size: 11pt;
+        }
+        
+        .payment-section p {
+            font-size: 10pt;
+            margin-bottom: 5px;
+        }
+        
+        .pix-key {
+            font-family: monospace;
+            font-size: 12pt;
+            background-color: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        /* Delivery Info */
+        .delivery-section {
+            display: table;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .delivery-item {
+            display: table-cell;
+            width: 33.33%;
+            text-align: center;
+            padding: 15px;
+            background-color: #F5EDE6;
+            border-right: 2px solid #fff;
+        }
+        
+        .delivery-item:last-child {
+            border-right: none;
+        }
+        
+        .delivery-item .icon {
+            font-size: 20pt;
+            color: #520B1B;
+            margin-bottom: 5px;
+        }
+        
+        .delivery-item .label {
+            font-size: 9pt;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .delivery-item .value {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #333;
+            margin-top: 5px;
+        }
+        
+        /* Notes */
+        .notes-section {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .notes-section h4 {
+            color: #520B1B;
+            margin-bottom: 10px;
+            font-size: 10pt;
+            text-transform: uppercase;
+        }
+        
+        .notes-section p {
+            font-size: 10pt;
+            color: #555;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #520B1B;
+            text-align: center;
+        }
+        
+        .biblical-quote {
+            font-style: italic;
+            color: #520B1B;
+            font-size: 11pt;
+            margin-bottom: 15px;
+            padding: 15px 30px;
+            background-color: #F5EDE6;
+            border-radius: 8px;
+        }
+        
+        .biblical-reference {
+            font-weight: bold;
+            font-style: normal;
+            display: block;
+            margin-top: 8px;
+            font-size: 10pt;
+        }
+        
+        .company-footer {
+            margin-top: 20px;
+            color: #666;
+            font-size: 9pt;
+        }
+        
+        .company-footer p {
+            margin: 3px 0;
+        }
+        
+        .contact-info {
+            font-weight: bold;
+            color: #520B1B;
+        }
+        
+        /* Validity Notice */
+        .validity-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+        
+        .validity-notice strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <img src="{{ logo_path }}" alt="Emunah Logo">
+            </div>
+            <p class="company-slogan">Vista-se com propósito</p>
+            <p class="document-title">Orçamento</p>
+            <p class="quote-number">#{{ quote.quote_number }}</p>
+        </div>
+        
+        <!-- Client and Quote Info -->
+        <div class="info-section">
+            <div class="info-column">
+                <h3 class="section-title">Dados do Cliente</h3>
+                <table class="info-table">
+                    <tr>
+                        <td>Nome:</td>
+                        <td>{{ quote.get_client_name() }}</td>
+                    </tr>
+                    {% if quote.get_client_email() %}
+                    <tr>
+                        <td>Email:</td>
+                        <td>{{ quote.get_client_email() }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if quote.get_client_phone() %}
+                    <tr>
+                        <td>Telefone:</td>
+                        <td>{{ quote.get_client_phone() }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+            </div>
+            <div class="info-column">
+                <h3 class="section-title">Informações do Orçamento</h3>
+                <table class="info-table">
+                    <tr>
+                        <td>Data de Emissão:</td>
+                        <td>{{ quote.created_at.strftime('%d/%m/%Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Válido até:</td>
+                        <td>{{ quote.valid_until.strftime('%d/%m/%Y') if quote.valid_until else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Vendedor:</td>
+                        <td>{{ quote.seller.name if quote.seller else 'Emunah' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Validity Notice -->
+        {% if quote.valid_until %}
+        <div class="validity-notice">
+            <strong>Atenção:</strong> Este orçamento é válido até <strong>{{ quote.valid_until.strftime('%d/%m/%Y') }}</strong>. 
+            Após esta data, os valores poderão sofrer alterações.
+        </div>
+        {% endif %}
+        
+        <!-- Items Section -->
+        <div class="items-section">
+            <h3 class="section-title">Itens do Pedido</h3>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Descrição</th>
+                        <th class="text-center" style="width: 15%;">Quantidade</th>
+                        <th class="text-right" style="width: 20%;">Valor Unit.</th>
+                        <th class="text-right" style="width: 25%;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>{{ quote.model or 'Camiseta Personalizada' }}</strong>
+                            {% if quote.shirt_color %}
+                            <br><small style="color: #666;">Cor: {{ quote.shirt_color }}</small>
+                            {% endif %}
+                            {% if quote.print_position %}
+                            <br><small style="color: #666;">Estampa: {{ quote.print_position }}</small>
+                            {% endif %}
+                            {% if quote.print_size %}
+                            <br><small style="color: #666;">Tamanho estampa: {{ quote.print_size }}</small>
+                            {% endif %}
+                            {% if quote.print_color %}
+                            <br><small style="color: #666;">Cor estampa: {{ quote.print_color }}</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{{ quote.total_quantity }} un.</td>
+                        <td class="text-right">R$ {{ "%.2f"|format(quote.unit_price or 0) }}</td>
+                        <td class="text-right"><strong>R$ {{ "%.2f"|format(quote.total_price or 0) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Totals -->
+        <div class="totals-section">
+            <div class="totals-box">
+                <table class="totals-table">
+                    <tr>
+                        <td>Subtotal:</td>
+                        <td>R$ {{ "%.2f"|format(quote.total_price or 0) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sinal ({{ quote.down_payment_percent }}%):</td>
+                        <td>R$ {{ "%.2f"|format(quote.down_payment_value or 0) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Restante na {{ 'Entrega' if quote.delivery_method == 'delivery' else 'Retirada' }}:</td>
+                        <td>R$ {{ "%.2f"|format((quote.total_price or 0) - (quote.down_payment_value or 0)) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="total-final">VALOR TOTAL:</td>
+                        <td class="total-final">R$ {{ "%.2f"|format(quote.total_price or 0) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Payment Info -->
+        <div class="payment-section">
+            <h4>💳 Informações de Pagamento</h4>
+            <p>Para confirmar seu pedido, efetue o pagamento do sinal via PIX:</p>
+            <p class="pix-key">{{ quote.pix_key }}</p>
+            <p style="margin-top: 10px; font-size: 9pt; opacity: 0.9;">
+                O valor restante deverá ser pago no ato da {{ 'entrega' if quote.delivery_method == 'delivery' else 'retirada' }}.
+            </p>
+        </div>
+        
+        <!-- Delivery Info -->
+        <div class="delivery-section">
+            <div class="delivery-item">
+                <div class="icon">📅</div>
+                <div class="label">Prazo de Produção</div>
+                <div class="value">{{ quote.delivery_days or 15 }} dias úteis</div>
+            </div>
+            <div class="delivery-item">
+                <div class="icon">📦</div>
+                <div class="label">Método de Entrega</div>
+                <div class="value">{{ 'Entrega' if quote.delivery_method == 'delivery' else 'Retirada' }}</div>
+            </div>
+            <div class="delivery-item">
+                <div class="icon">📍</div>
+                <div class="label">Previsão</div>
+                <div class="value">{{ quote.delivery_date_estimated.strftime('%d/%m/%Y') if quote.delivery_date_estimated else 'A confirmar' }}</div>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        {% if quote.notes %}
+        <div class="notes-section">
+            <h4>📝 Observações</h4>
+            <p>{{ quote.notes }}</p>
+        </div>
+        {% endif %}
+        
+        <!-- Footer with Biblical Quote -->
+        <div class="footer">
+            <div class="biblical-quote">
+                "Tudo posso naquele que me fortalece."
+                <span class="biblical-reference">— Filipenses 4:13</span>
+            </div>
+            
+            <div class="company-footer">
+                <p><strong style="color: #520B1B; font-size: 14pt;">Emunah</strong></p>
+                <p>Vista-se com propósito</p>
+                <p class="contact-info">📱 (11) 99889-6725</p>
+                <p>Obrigado pela preferência!</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
