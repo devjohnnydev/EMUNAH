@@ -7,3 +7,17 @@ psycopg2-binary>=2.9.0
 python-dotenv>=1.0.0
 werkzeug>=2.3.0
 email-validator>=2.0.0
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+email-validator
+flask
+flask-login
+flask-migrate
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+python-dotenv
+werkzeug
