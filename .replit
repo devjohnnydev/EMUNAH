@@ -50,3 +50,10 @@ waitForPort = 5000
 
 [agent]
 mockupState = "FULLSTACK"
+expertMode = true
+
+[userenv]
+
+[userenv.shared]
+ADMIN_EMAIL = "guimaraes.adriana23@gmail.com"
+ADMIN_PASSWORD = "11998896725"
