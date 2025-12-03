@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
+import { useEffect } from "react";
 
 // Pages
 import Login from "@/pages/Login";
@@ -20,6 +21,12 @@ function ProtectedRoute({ component: Component, ...rest }: any) {
   const { user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
+  useEffect(() => {
+    if (!isLoading && !user) {
+      setLocation("/login");
+    }
+  }, [isLoading, user, setLocation]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -29,7 +36,6 @@ function ProtectedRoute({ component: Component, ...rest }: any) {
   }
 
   if (!user) {
-    setLocation("/login");
     return null;
   }
 
