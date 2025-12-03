@@ -1,0 +1,169 @@
+Crie um sistema completo de gerenciamento de vendas e orçamentos para a empresa EMUNAH, 
+especializada em camisetas evangélicas personalizadas, usando Python e Flask.
+
+=== IDENTIDADE VISUAL ===
+- Cor primária: Vinho/Bordô (#8B1538 ou similar ao das imagens)
+- Cor secundária: Bege/Nude (#E8D5C4)
+- Cor de texto: Branco e tons escuros
+- Fonte: Elegante e moderna (similar à usada no logo "Emunah")
+- Slogan: "Vista-se com propósito."
+
+=== FUNCIONALIDADES PRINCIPAIS ===
+
+1. GESTÃO DE ORÇAMENTOS:
+   - Criar, editar e visualizar orçamentos
+   - Campos: cliente, vendedor, data, validade, quantidade, modelo, estampa, cores
+   - Calcular valor total e sinal automaticamente
+   - Gerar número de orçamento único
+   - Status do orçamento (pendente, aprovado, em produção, concluído)
+
+2. CATÁLOGO DE PRODUTOS:
+   - Modelos de camisetas (gola, manga, tecido)
+   - Galeria de estampas evangélicas
+   - Upload de imagens de estampas personalizadas
+   - Preços por modelo e tipo de estampa
+   - Especificações técnicas (tamanho, cor, localização da estampa)
+
+3. GESTÃO DE CLIENTES:
+   - Cadastro completo (nome, telefone, email, endereço)
+   - Histórico de compras
+   - Orçamentos anteriores
+
+4. GESTÃO DE VENDEDORES:
+   - Cadastro de vendedores (como "JESSICA")
+   - Comissões e metas
+   - Relatório de vendas por vendedor
+
+5. SISTEMA DE PAGAMENTO:
+   - Integração com PIX
+   - Geração de QR Code para pagamento
+   - Registro de pagamentos (sinal e restante)
+   - Controle de inadimplência
+
+6. RELATÓRIOS E DASHBOARDS:
+   - Vendas por período
+   - Produtos mais vendidos
+   - Performance de vendedores
+   - Gráficos interativos
+
+7. ÁREA ADMINISTRATIVA:
+   - Login seguro
+   - Diferentes níveis de acesso (admin, vendedor, visualizador)
+   - Configurações do sistema
+
+=== REQUISITOS TÉCNICOS ===
+
+Backend (Python/Flask):
+- Flask para rotas e API
+- SQLAlchemy para banco de dados
+- Flask-Login para autenticação
+- Flask-WTF para formulários
+- Pillow para manipulação de imagens
+- ReportLab ou WeasyPrint para gerar PDFs dos orçamentos
+- QRCode para geração de PIX
+
+Frontend:
+- HTML5, CSS3, JavaScript
+- Bootstrap 5 ou Tailwind CSS
+- Paleta de cores: vinho (#8B1538), bege (#E8D5C4), branco, preto
+- Design responsivo (mobile-first)
+- Ícones: Font Awesome ou similar
+
+Banco de Dados:
+- SQLite para desenvolvimento
+- PostgreSQL para produção
+- Tabelas: usuarios, clientes, produtos, estampas, orcamentos, pagamentos, vendedores
+
+Estrutura de Pastas:
+emunah_system/
+├── app.py
+├── config.py
+├── requirements.txt
+├── models.py
+├── routes/
+│   ├── init.py
+│   ├── auth.py
+│   ├── orcamentos.py
+│   ├── clientes.py
+│   ├── produtos.py
+│   └── relatorios.py
+├── templates/
+│   ├── base.html
+│   ├── index.html
+│   ├── orcamentos/
+│   ├── clientes/
+│   └── produtos/
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── main.js
+│   ├── images/
+│   │   └── logo.png
+│   └── uploads/
+└── utils/
+├── pdf_generator.py
+├── pix_generator.py
+└── helpers.py
+=== FUNCIONALIDADES ESPECÍFICAS DO ORÇAMENTO ===
+
+Baseado no modelo fornecido, criar:
+- Cabeçalho com logo EMUNAH
+- Seção "DESCRIÇÃO DA ENCOMENDA" com:
+  * Modelo (tipo de camiseta)
+  * Valor total
+  * Sinal (40% do valor total)
+  * Vendedor
+  * Cliente
+  * Data do orçamento
+  * Validade (15 dias após data do orçamento)
+  * Quantidade
+- Seção "MODELO DO PEDIDO" com:
+  * Tipo de estampa (frente, costas, manga)
+  * Cor da camiseta
+  * Tamanho da estampa
+  * Cor da estampa
+  * Visualização da estampa
+- Rodapé com informações de pagamento PIX
+- Botão para exportar em PDF
+- Botão para enviar por WhatsApp
+
+=== DESIGN E UX ===
+- Interface limpa e profissional
+- Navegação intuitiva
+- Feedback visual para ações do usuário
+- Validação de formulários
+- Loading states
+- Mensagens de erro/sucesso claras
+- Tema claro com elementos em vinho e bege
+
+=== SEGURANÇA ===
+- Hash de senhas (bcrypt)
+- Proteção CSRF
+- Validação de inputs
+- Sanitização de uploads
+- Sessões seguras
+
+=== EXTRAS ===
+- Sistema de notificações
+- Backup automático
+- Logs de atividades
+- Modo escuro (opcional)
+- Multi-idioma (PT-BR prioritário)
+
+Por favor, implemente este sistema de forma modular, com código limpo, comentado 
+e seguindo as melhores práticas do Flask. Crie também um README.md com instruções 
+de instalação e uso.
+🎨 Cores Exatas para Usar no CSScssCopy code[data-radix-scroll-area-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-scroll-area-viewport]::-webkit-scrollbar{display:none}:root {
+    --cor-primaria: #8B1538;      /* Vinho/Bordô */
+    --cor-secundaria: #E8D5C4;    /* Bege/Nude */
+    --cor-texto-escuro: #2C2C2C;  /* Quase preto */
+    --cor-texto-claro: #FFFFFF;   /* Branco */
+    --cor-destaque: #A8193D;      /* Vinho claro */
+    --cor-fundo: #FAF7F5;         /* Off-white */
+}📝 Exemplo de Mensagem AdicionalSe quiser ser ainda mais específico, adicione ao prompt:IMPORTANTE: 
+- A página de orçamento deve replicar EXATAMENTE o layout do documento fornecido
+- Use a fonte similar à do logo (sugestões: Cormorant, Playfair Display, ou Cinzel)
+- Todas as mensagens devem ter tom evangélico e inspirador
+- Incluir frases bíblicas ou motivacionais nas páginas
+- O sistema deve ser rápido e funcionar bem em conexões lentas
