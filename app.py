@@ -609,11 +609,18 @@ def new_quote():
     if request.method == 'POST':
         client_id = request.form.get('client_id')
         
-        # Calculate prices
-        total_quantity = int(request.form.get('total_quantity', 0))
-        unit_price = float(request.form.get('unit_price', 0)) if request.form.get('unit_price') else 0
-        total_price = total_quantity * unit_price if unit_price else float(request.form.get('total_price', 0))
-        down_payment_percent = int(request.form.get('down_payment_percent', 40))
+        # Calculate prices - handle empty strings properly
+        total_quantity_str = request.form.get('total_quantity', '0')
+        total_quantity = int(total_quantity_str) if total_quantity_str else 0
+        
+        unit_price_str = request.form.get('unit_price', '')
+        unit_price = float(unit_price_str) if unit_price_str else 0
+        
+        total_price_str = request.form.get('total_price', '')
+        total_price = total_quantity * unit_price if unit_price else (float(total_price_str) if total_price_str else 0)
+        
+        down_payment_percent_str = request.form.get('down_payment_percent', '40')
+        down_payment_percent = int(down_payment_percent_str) if down_payment_percent_str else 40
         down_payment_value = total_price * (down_payment_percent / 100)
         
         # Calculate delivery date
