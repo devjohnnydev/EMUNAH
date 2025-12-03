@@ -4,173 +4,174 @@
 {% block header_title %}Visão Geral{% endblock %}
 
 {% block content %}
-<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Faturamento Total</span>
             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
         </div>
-        <div class="text-2xl font-serif font-bold text-primary">R$ {{ "{:,.2f}".format(metrics.total_revenue).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-        <p class="text-xs text-green-600 mt-1">+12% <span class="text-gray-500">vs mês anterior</span></p>
+        <div class="text-2xl font-serif font-bold text-primary">R$ {{ "%.2f"|format(metrics.total_revenue) }}</div>
+        <p class="text-xs text-green-600 mt-1">Pedidos entregues</p>
     </div>
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Pedidos Concluídos</span>
-            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="text-2xl font-serif font-bold text-primary">{{ metrics.completed_orders }}</div>
-        <p class="text-xs text-green-600 mt-1">+8% <span class="text-gray-500">vs mês anterior</span></p>
+        <p class="text-xs text-green-600 mt-1">Total entregue</p>
     </div>
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">Orçamentos Pendentes</span>
+            <span class="text-sm text-gray-500">Em Produção</span>
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-primary">{{ metrics.orders_in_production }}</div>
+        <p class="text-xs text-blue-600 mt-1">Pedidos ativos</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-gray-500">Cotações Pendentes</span>
             <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <div class="text-2xl font-serif font-bold text-primary">{{ metrics.pending_budgets }}</div>
+        <div class="text-2xl font-serif font-bold text-primary">{{ metrics.pending_quotes }}</div>
         <p class="text-xs text-amber-600 mt-1">Aguardando aprovação</p>
     </div>
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
             <span class="text-sm text-gray-500">Ticket Médio</span>
-            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <div class="text-2xl font-serif font-bold text-primary">R$ {{ "{:,.2f}".format(metrics.average_ticket).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-        <p class="text-xs text-green-600 mt-1">+5% <span class="text-gray-500">vs mês anterior</span></p>
-    </div>
-</div>
-
-<div class="grid gap-4 md:grid-cols-7 mt-6">
-    <div class="col-span-4 bg-white p-6 rounded-xl shadow-sm">
-        <h3 class="font-serif text-lg font-bold text-primary mb-2">Faturamento Anual</h3>
-        <p class="text-sm text-gray-500 mb-4">Receita acumulada mensalmente</p>
-        <div class="h-72">
-            <canvas id="revenueChart"></canvas>
-        </div>
-    </div>
-    
-    <div class="col-span-3 bg-white p-6 rounded-xl shadow-sm">
-        <h3 class="font-serif text-lg font-bold text-primary mb-2">Status dos Pedidos</h3>
-        <p class="text-sm text-gray-500 mb-4">Distribuição atual de pedidos</p>
-        <div class="h-60 flex items-center justify-center">
-            <canvas id="statusChart"></canvas>
-        </div>
-        <div class="flex flex-wrap gap-2 justify-center mt-4">
-            <div class="flex items-center gap-1 text-xs text-gray-500">
-                <div class="w-2 h-2 rounded-full bg-green-500"></div> Entregue
-            </div>
-            <div class="flex items-center gap-1 text-xs text-gray-500">
-                <div class="w-2 h-2 rounded-full bg-blue-500"></div> Em Produção
-            </div>
-            <div class="flex items-center gap-1 text-xs text-gray-500">
-                <div class="w-2 h-2 rounded-full bg-amber-500"></div> Pendente
-            </div>
-            <div class="flex items-center gap-1 text-xs text-gray-500">
-                <div class="w-2 h-2 rounded-full bg-purple-500"></div> Enviado
-            </div>
-        </div>
+        <div class="text-2xl font-serif font-bold text-primary">R$ {{ "%.2f"|format(metrics.average_ticket) }}</div>
+        <p class="text-xs text-green-600 mt-1">Por pedido</p>
     </div>
 </div>
 
 <div class="grid gap-4 md:grid-cols-3 mt-6">
     <div class="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-xl">
         <h3 class="font-serif text-lg font-bold text-primary mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             Ações Rápidas
         </h3>
         <div class="space-y-2">
             <a href="{{ url_for('new_quote') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
                 <span class="font-medium text-sm">Nova Cotação</span>
+                <p class="text-xs text-gray-500">Criar orçamento para cliente</p>
             </a>
             <a href="{{ url_for('new_client') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
                 <span class="font-medium text-sm">Cadastrar Cliente</span>
+                <p class="text-xs text-gray-500">Adicionar novo cliente</p>
             </a>
-            <a href="{{ url_for('new_order') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
-                <span class="font-medium text-sm">Lançar Pedido</span>
+            <a href="{{ url_for('quotes', status='sent') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
+                <span class="font-medium text-sm">Cotações Enviadas</span>
+                <p class="text-xs text-gray-500">Aguardando aprovação</p>
             </a>
         </div>
     </div>
     
     <div class="col-span-2 bg-white p-6 rounded-xl shadow-sm">
-        <h3 class="font-serif text-lg font-bold text-primary mb-4">Últimos Orçamentos</h3>
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Últimas Cotações</h3>
         <div class="space-y-4">
-            {% if budgets %}
-                {% for budget in budgets[:3] %}
-                <div class="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-primary font-bold">
-                            {{ budget.client.name[0] if budget.client else 'C' }}
+            {% if quotes %}
+                {% for quote in quotes[:5] %}
+                <a href="{{ url_for('view_quote', id=quote.id) }}" class="block">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-4 last:border-0 last:pb-0 hover:bg-sand/20 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-primary font-bold">
+                                {{ quote.get_client_name()[0] }}
+                            </div>
+                            <div>
+                                <p class="font-medium text-sm">{{ quote.get_client_name() }}</p>
+                                <p class="text-xs text-gray-500">{{ quote.quote_number or 'Rascunho' }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-medium text-sm">{{ budget.client.name if budget.client else 'Cliente' }}</p>
-                            <p class="text-xs text-gray-500">{{ budget.budget_number }}</p>
+                        <div class="text-right">
+                            <p class="font-medium text-sm">R$ {{ "%.2f"|format(quote.total_price or 0) }}</p>
+                            <span class="text-xs px-2 py-0.5 rounded-full inline-block mt-1 
+                                {% if quote.status == 'approved' or quote.status == 'converted' %}bg-green-100 text-green-600
+                                {% elif quote.status == 'sent' %}bg-blue-100 text-blue-600
+                                {% elif quote.status == 'draft' %}bg-gray-100 text-gray-600
+                                {% elif quote.status == 'rejected' %}bg-red-100 text-red-600
+                                {% else %}bg-amber-100 text-amber-600{% endif %}">
+                                {% if quote.status == 'draft' %}Rascunho
+                                {% elif quote.status == 'sent' %}Enviada
+                                {% elif quote.status == 'approved' %}Aprovada
+                                {% elif quote.status == 'converted' %}Pedido Criado
+                                {% elif quote.status == 'rejected' %}Rejeitada
+                                {% else %}Pendente{% endif %}
+                            </span>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-medium text-sm">R$ {{ "{:,.2f}".format(budget.total_value).replace(',', 'X').replace('.', ',').replace('X', '.') }}</p>
-                        <span class="text-xs px-2 py-0.5 rounded-full inline-block mt-1 
-                            {% if budget.status == 'approved' %}bg-green-100 text-green-600
-                            {% elif budget.status == 'sent' %}bg-blue-100 text-blue-600
-                            {% elif budget.status == 'draft' %}bg-gray-100 text-gray-600
-                            {% else %}bg-amber-100 text-amber-600{% endif %}">
-                            {{ budget.status|capitalize }}
-                        </span>
-                    </div>
-                </div>
+                </a>
                 {% endfor %}
             {% else %}
-                <p class="text-gray-500 text-sm text-center py-4">Nenhum orçamento encontrado</p>
+                <p class="text-gray-500 text-sm text-center py-4">Nenhuma cotação encontrada</p>
             {% endif %}
         </div>
+        <a href="{{ url_for('quotes') }}" class="block text-center text-primary text-sm font-medium mt-4 hover:underline">
+            Ver todas as cotações →
+        </a>
     </div>
 </div>
 
-<script>
-const revenueData = {
-    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-    datasets: [{
-        label: 'Receita',
-        data: [4500, 5200, 4800, 6100, 5800, 7200, 6900, 8100, 7500, 8800, 9200, 10500],
-        backgroundColor: '#520B1B',
-        borderRadius: 4,
-        barThickness: 30
-    }]
-};
-
-const statusData = {
-    labels: ['Entregue', 'Em Produção', 'Pendente', 'Enviado'],
-    datasets: [{
-        data: [35, 25, 20, 20],
-        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'],
-        borderWidth: 0
-    }]
-};
-
-new Chart(document.getElementById('revenueChart'), {
-    type: 'bar',
-    data: revenueData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            y: { beginAtZero: true, grid: { drawBorder: false }, ticks: { callback: v => 'R$' + v } },
-            x: { grid: { display: false } }
-        }
-    }
-});
-
-new Chart(document.getElementById('statusChart'), {
-    type: 'doughnut',
-    data: statusData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '60%',
-        plugins: { legend: { display: false } }
-    }
-});
-</script>
+<div class="bg-white p-6 rounded-xl shadow-sm mt-6">
+    <h3 class="font-serif text-lg font-bold text-primary mb-4">Últimos Pedidos</h3>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-sand/30">
+                <tr>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Pedido</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Valor</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Entrega</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for order in orders[:5] %}
+                <tr class="hover:bg-sand/20">
+                    <td class="px-4 py-3">
+                        <a href="{{ url_for('view_order', id=order.id) }}" class="font-medium text-primary hover:underline">
+                            {{ order.order_number }}
+                        </a>
+                    </td>
+                    <td class="px-4 py-3 text-sm">{{ order.get_client_name() }}</td>
+                    <td class="px-4 py-3 text-sm font-medium">R$ {{ "%.2f"|format(order.total_value or 0) }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if order.status == 'delivered' %}bg-emerald-100 text-emerald-700
+                            {% elif order.status == 'production' %}bg-yellow-100 text-yellow-700
+                            {% elif order.status == 'ready' %}bg-green-100 text-green-700
+                            {% elif order.status == 'shipping' %}bg-purple-100 text-purple-700
+                            {% else %}bg-blue-100 text-blue-700{% endif %}">
+                            {% if order.status == 'created' %}Novo
+                            {% elif order.status == 'production' %}Produção
+                            {% elif order.status == 'ready' %}Pronto
+                            {% elif order.status == 'shipping' %}Enviado
+                            {% elif order.status == 'delivered' %}Entregue
+                            {% else %}{{ order.status }}{% endif %}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-600">
+                        {{ order.delivery_date_estimated.strftime('%d/%m/%Y') if order.delivery_date_estimated else '-' }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                        Nenhum pedido encontrado
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('orders') }}" class="block text-center text-primary text-sm font-medium mt-4 hover:underline">
+        Ver todos os pedidos →
+    </a>
+</div>
 {% endblock %}

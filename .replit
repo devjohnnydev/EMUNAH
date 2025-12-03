@@ -21,7 +21,7 @@ localPort = 35675
 externalPort = 3000
 
 [[ports]]
-localPort = 44403
+localPort = 35955
 externalPort = 3001
 
 [env]
@@ -57,3 +57,5 @@ expertMode = true
 [userenv.shared]
 ADMIN_EMAIL = "guimaraes.adriana23@gmail.com"
 ADMIN_PASSWORD = "11998896725"
+ADMIN_NAME = "Adriana Guimarães"
+ADMIN_PHONE = "11998896725"

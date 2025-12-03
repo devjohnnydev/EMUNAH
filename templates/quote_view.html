@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Cotação #{{ quote.quote_number }}{% endblock %}
+{% block header_title %}Cotação #{{ quote.quote_number }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl">
+    <!-- Status Banner -->
+    <div class="mb-6 p-4 rounded-lg 
+        {% if quote.status == 'draft' %}bg-gray-100 border border-gray-300
+        {% elif quote.status == 'pending' %}bg-yellow-50 border border-yellow-300
+        {% elif quote.status == 'sent' %}bg-blue-50 border border-blue-300
+        {% elif quote.status == 'approved' %}bg-green-50 border border-green-300
+        {% elif quote.status == 'rejected' %}bg-red-50 border border-red-300
+        {% elif quote.status == 'converted' %}bg-purple-50 border border-purple-300
+        {% else %}bg-gray-50 border border-gray-300{% endif %}">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">
+                    {% if quote.status == 'draft' %}📝
+                    {% elif quote.status == 'pending' %}⏳
+                    {% elif quote.status == 'sent' %}📧
+                    {% elif quote.status == 'approved' %}✅
+                    {% elif quote.status == 'rejected' %}❌
+                    {% elif quote.status == 'converted' %}🎉
+                    {% else %}📋{% endif %}
+                </span>
+                <div>
+                    <p class="font-semibold text-lg">
+                        {% if quote.status == 'draft' %}Rascunho
+                        {% elif quote.status == 'pending' %}Aguardando Envio
+                        {% elif quote.status == 'sent' %}Enviada ao Cliente
+                        {% elif quote.status == 'approved' %}Aprovada
+                        {% elif quote.status == 'rejected' %}Rejeitada
+                        {% elif quote.status == 'converted' %}Convertida em Pedido
+                        {% else %}{{ quote.status }}{% endif %}
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Criada em {{ quote.created_at.strftime('%d/%m/%Y às %H:%M') }}
+                        {% if quote.valid_until %}
+                        • Válida até {{ quote.valid_until.strftime('%d/%m/%Y') }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                {% if quote.status not in ['converted', 'rejected'] %}
+                <a href="{{ url_for('edit_quote', id=quote.id) }}" 
+                   class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Editar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quote Details Card -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <!-- Header with Logo -->
+        <div class="text-center mb-6 pb-6 border-b border-gray-200">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-xl font-serif">E</span>
+                </div>
+                <h1 class="font-serif text-3xl font-bold text-primary">Emunah</h1>
+            </div>
+            <p class="text-gray-500">Vista-se com propósito</p>
+            <h2 class="text-xl font-semibold text-gray-800 mt-4">ORÇAMENTO</h2>
+        </div>
+        
+        <!-- Quote Info Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Left Column -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">Descrição da Encomenda</h3>
+                <table class="w-full">
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Modelo:</td>
+                        <td class="py-2 font-medium">{{ quote.model or 'Camiseta' }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Valor Total:</td>
+                        <td class="py-2 font-medium text-primary">R$ {{ "%.2f"|format(quote.total_price or 0) }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Vendedor:</td>
+                        <td class="py-2 font-medium">{{ quote.seller.name if quote.seller else 'N/A' }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Data:</td>
+                        <td class="py-2 font-medium">{{ quote.created_at.strftime('%d/%m/%Y') }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">Dados do Cliente</h3>
+                <table class="w-full">
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Cliente:</td>
+                        <td class="py-2 font-medium">{{ quote.get_client_name() }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Quantidade:</td>
+                        <td class="py-2 font-medium">{{ quote.total_quantity }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Sinal ({{ quote.down_payment_percent }}%):</td>
+                        <td class="py-2 font-medium">R$ {{ "%.2f"|format(quote.down_payment_value or 0) }}</td>
+                    </tr>
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2 text-gray-600">Validade:</td>
+                        <td class="py-2 font-medium">{{ quote.valid_until.strftime('%d/%m/%Y') if quote.valid_until else 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Order Details -->
+        <div class="bg-sand/30 rounded-lg p-4 mb-6">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase mb-3">Modelo do Pedido</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <table class="w-full">
+                        <tr class="border-b border-gray-100">
+                            <td class="py-2 text-gray-600">Estampa:</td>
+                            <td class="py-2 font-medium">{{ quote.print_position or 'Só Frente' }}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-2 text-gray-600">Cor da Camiseta:</td>
+                            <td class="py-2 font-medium">{{ quote.shirt_color or 'A definir' }}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-2 text-gray-600">Tamanho da Estampa:</td>
+                            <td class="py-2 font-medium">{{ quote.print_size or 'A definir' }}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-2 text-gray-600">Cor da Estampa:</td>
+                            <td class="py-2 font-medium">{{ quote.print_color or 'A definir' }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="flex items-center justify-center">
+                    {% if quote.print_ref and quote.print_ref.file_url %}
+                    <img src="{{ quote.print_ref.file_url }}" alt="Estampa" class="max-h-40 rounded-lg shadow">
+                    {% else %}
+                    <div class="text-center text-gray-400">
+                        <svg class="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-sm mt-2">Estampa personalizada</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Info -->
+        <div class="bg-primary/5 rounded-lg p-4 mb-6">
+            <p class="text-sm text-gray-700 mb-2">
+                <strong>O pagamento restante da encomenda deverá ser quitado no ato da {{ 'entrega' if quote.delivery_method == 'delivery' else 'retirada' }}.</strong>
+            </p>
+            <p class="text-sm">
+                <strong>PIX para pagamento:</strong> {{ quote.pix_key }}
+            </p>
+        </div>
+        
+        <!-- Delivery Info -->
+        <div class="flex items-center gap-4 text-sm text-gray-600">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Prazo: <strong>{{ quote.delivery_days or 15 }} dias</strong></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span>Método: <strong>{{ 'Entrega' if quote.delivery_method == 'delivery' else 'Retirada' }}</strong></span>
+            </div>
+            {% if quote.delivery_date_estimated %}
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Previsão: <strong>{{ quote.delivery_date_estimated.strftime('%d/%m/%Y') }}</strong></span>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if quote.notes %}
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <h4 class="text-sm font-semibold text-gray-500 uppercase mb-2">Observações</h4>
+            <p class="text-gray-700">{{ quote.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Actions -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Ações</h3>
+        <div class="flex flex-wrap gap-3">
+            {% if quote.status in ['draft', 'pending'] %}
+            <form method="POST" action="{{ url_for('send_quote', id=quote.id) }}" class="inline">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    Enviar por Email
+                </button>
+            </form>
+            {% endif %}
+            
+            {% if quote.status in ['draft', 'pending', 'sent'] %}
+            <form method="POST" action="{{ url_for('approve_quote', id=quote.id) }}" class="inline"
+                  onsubmit="return confirm('Confirma a aprovação desta cotação? Um pedido será criado automaticamente.')">
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Aprovar e Criar Pedido
+                </button>
+            </form>
+            
+            <form method="POST" action="{{ url_for('reject_quote', id=quote.id) }}" class="inline"
+                  onsubmit="return confirm('Tem certeza que deseja rejeitar esta cotação?')">
+                <button type="submit" class="bg-red-100 text-red-700 px-6 py-2 rounded-lg font-medium hover:bg-red-200 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Rejeitar
+                </button>
+            </form>
+            {% endif %}
+            
+            {% if quote.status == 'converted' and quote.orders %}
+            <a href="{{ url_for('view_order', id=quote.orders[0].id) }}" 
+               class="bg-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                Ver Pedido #{{ quote.orders[0].order_number }}
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('quotes') }}" class="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
+                Voltar para Lista
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
