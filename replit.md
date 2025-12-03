@@ -134,6 +134,9 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Atualizações Recentes
 
+- **03/12/2024**: Upload de imagens de referência para cotações (além de URLs)
+- **03/12/2024**: QR Code PIX integrado ao PDF de orçamento
+- **03/12/2024**: Configuração Railway otimizada com nixpacks.toml
 - **03/12/2024**: Sistema profissional de orçamentos em PDF com logo Emunah e mensagem bíblica
 - **03/12/2024**: Compartilhamento de orçamentos via WhatsApp com mensagem formatada
 - **03/12/2024**: Envio de orçamento por email com PDF anexo
