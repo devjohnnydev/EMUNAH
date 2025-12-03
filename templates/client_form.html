@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if client else 'Novo' }} Cliente{% endblock %}
+{% block header_title %}{{ 'Editar' if client else 'Novo' }} Cliente{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <form method="POST">
+            <div class="grid gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+                    <input type="text" name="name" value="{{ client.name if client else '' }}" required
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">CPF/CNPJ</label>
+                        <input type="text" name="cpf_cnpj" value="{{ client.cpf_cnpj if client else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                        <input type="text" name="phone" value="{{ client.phone if client else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" value="{{ client.email if client else '' }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
+                    <input type="text" name="address" value="{{ client.address if client else '' }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+                        <input type="text" name="city" value="{{ client.city if client else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                        <select name="state" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                            <option value="">Selecione</option>
+                            <option value="AC" {{ 'selected' if client and client.state == 'AC' else '' }}>Acre</option>
+                            <option value="AL" {{ 'selected' if client and client.state == 'AL' else '' }}>Alagoas</option>
+                            <option value="AP" {{ 'selected' if client and client.state == 'AP' else '' }}>Amapá</option>
+                            <option value="AM" {{ 'selected' if client and client.state == 'AM' else '' }}>Amazonas</option>
+                            <option value="BA" {{ 'selected' if client and client.state == 'BA' else '' }}>Bahia</option>
+                            <option value="CE" {{ 'selected' if client and client.state == 'CE' else '' }}>Ceará</option>
+                            <option value="DF" {{ 'selected' if client and client.state == 'DF' else '' }}>Distrito Federal</option>
+                            <option value="ES" {{ 'selected' if client and client.state == 'ES' else '' }}>Espírito Santo</option>
+                            <option value="GO" {{ 'selected' if client and client.state == 'GO' else '' }}>Goiás</option>
+                            <option value="MA" {{ 'selected' if client and client.state == 'MA' else '' }}>Maranhão</option>
+                            <option value="MT" {{ 'selected' if client and client.state == 'MT' else '' }}>Mato Grosso</option>
+                            <option value="MS" {{ 'selected' if client and client.state == 'MS' else '' }}>Mato Grosso do Sul</option>
+                            <option value="MG" {{ 'selected' if client and client.state == 'MG' else '' }}>Minas Gerais</option>
+                            <option value="PA" {{ 'selected' if client and client.state == 'PA' else '' }}>Pará</option>
+                            <option value="PB" {{ 'selected' if client and client.state == 'PB' else '' }}>Paraíba</option>
+                            <option value="PR" {{ 'selected' if client and client.state == 'PR' else '' }}>Paraná</option>
+                            <option value="PE" {{ 'selected' if client and client.state == 'PE' else '' }}>Pernambuco</option>
+                            <option value="PI" {{ 'selected' if client and client.state == 'PI' else '' }}>Piauí</option>
+                            <option value="RJ" {{ 'selected' if client and client.state == 'RJ' else '' }}>Rio de Janeiro</option>
+                            <option value="RN" {{ 'selected' if client and client.state == 'RN' else '' }}>Rio Grande do Norte</option>
+                            <option value="RS" {{ 'selected' if client and client.state == 'RS' else '' }}>Rio Grande do Sul</option>
+                            <option value="RO" {{ 'selected' if client and client.state == 'RO' else '' }}>Rondônia</option>
+                            <option value="RR" {{ 'selected' if client and client.state == 'RR' else '' }}>Roraima</option>
+                            <option value="SC" {{ 'selected' if client and client.state == 'SC' else '' }}>Santa Catarina</option>
+                            <option value="SP" {{ 'selected' if client and client.state == 'SP' else '' }}>São Paulo</option>
+                            <option value="SE" {{ 'selected' if client and client.state == 'SE' else '' }}>Sergipe</option>
+                            <option value="TO" {{ 'selected' if client and client.state == 'TO' else '' }}>Tocantins</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+                        <input type="text" name="zip_code" value="{{ client.zip_code if client else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    {{ 'Atualizar' if client else 'Criar' }} Cliente
+                </button>
+                <a href="{{ url_for('clients') }}" class="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

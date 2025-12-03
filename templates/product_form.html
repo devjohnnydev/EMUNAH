@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if product else 'Novo' }} Produto{% endblock %}
+{% block header_title %}{{ 'Editar' if product else 'Novo' }} Produto{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <form method="POST">
+            <div class="grid gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Produto *</label>
+                    <input type="text" name="name" value="{{ product.name if product else '' }}" required
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Modelo *</label>
+                        <select name="model" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                            <option value="basic" {{ 'selected' if product and product.model == 'basic' else '' }}>Básica</option>
+                            <option value="polo" {{ 'selected' if product and product.model == 'polo' else '' }}>Polo</option>
+                            <option value="oversized" {{ 'selected' if product and product.model == 'oversized' else '' }}>Oversized</option>
+                            <option value="regata" {{ 'selected' if product and product.model == 'regata' else '' }}>Regata</option>
+                            <option value="manga_longa" {{ 'selected' if product and product.model == 'manga_longa' else '' }}>Manga Longa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tecido *</label>
+                        <select name="fabric" required class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                            <option value="cotton" {{ 'selected' if product and product.fabric == 'cotton' else '' }}>Algodão</option>
+                            <option value="pv" {{ 'selected' if product and product.fabric == 'pv' else '' }}>PV</option>
+                            <option value="dry-fit" {{ 'selected' if product and product.fabric == 'dry-fit' else '' }}>Dry-Fit</option>
+                            <option value="malha" {{ 'selected' if product and product.fabric == 'malha' else '' }}>Malha</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cor *</label>
+                        <input type="text" name="color" value="{{ product.color if product else '' }}" required
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="Preto, Branco, etc.">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tamanhos (separados por vírgula)</label>
+                        <input type="text" name="sizes" value="{{ product.sizes|join(', ') if product else 'PP, P, M, G, GG, XG' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="PP, P, M, G, GG, XG">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Preço Base (R$)</label>
+                        <input type="number" name="base_price" step="0.01" value="{{ product.base_price if product else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estoque</label>
+                        <input type="number" name="stock" value="{{ product.stock if product else 0 }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
+                    <input type="url" name="image_url" value="{{ product.image_url if product else '' }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        placeholder="https://exemplo.com/imagem.png">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="active" id="active" {{ 'checked' if product and product.active else 'checked' if not product else '' }}
+                        class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300 rounded">
+                    <label for="active" class="text-sm text-gray-700">Produto ativo</label>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    {{ 'Atualizar' if product else 'Criar' }} Produto
+                </button>
+                <a href="{{ url_for('products') }}" class="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

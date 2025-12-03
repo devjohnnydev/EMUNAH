@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+{% block header_title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <div class="relative w-72">
+        <svg class="absolute left-3 top-3 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" placeholder="Buscar cliente..." class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+    </div>
+    <a href="{{ url_for('new_client') }}" class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Novo Cliente
+    </a>
+</div>
+
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="p-6 border-b border-gray-100">
+        <h3 class="font-serif text-lg font-bold text-primary">Lista de Clientes</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">CPF/CNPJ</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Contato</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Localização</th>
+                    <th class="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for client in clients %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center text-primary font-bold">
+                                {{ client.name[0] }}
+                            </div>
+                            <div class="font-medium text-gray-900">{{ client.name }}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ client.cpf_cnpj or 'N/A' }}</td>
+                    <td class="px-6 py-4">
+                        <div class="text-sm text-gray-900">{{ client.email or 'N/A' }}</div>
+                        <div class="text-xs text-gray-500">{{ client.phone or '' }}</div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        {% if client.city and client.state %}
+                            {{ client.city }} - {{ client.state }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <a href="{{ url_for('edit_client', id=client.id) }}" class="text-gray-500 hover:text-primary text-sm font-medium">Editar</a>
+                        <form action="{{ url_for('delete_client', id=client.id) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza que deseja excluir este cliente?')">
+                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum cliente cadastrado</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

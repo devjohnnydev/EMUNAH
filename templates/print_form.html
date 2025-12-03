@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if print else 'Nova' }} Estampa{% endblock %}
+{% block header_title %}{{ 'Editar' if print else 'Nova' }} Estampa{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <form method="POST">
+            <div class="grid gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Estampa *</label>
+                    <input type="text" name="name" value="{{ print.name if print else '' }}" required
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                    <textarea name="description" rows="2"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">{{ print.description if print else '' }}</textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">URL da Imagem</label>
+                    <input type="url" name="file_url" value="{{ print.file_url if print else '' }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                        placeholder="https://exemplo.com/imagem.png">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Cores (separadas por vírgula)</label>
+                        <input type="text" name="colors" value="{{ print.colors|join(', ') if print else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="Preto, Branco, Vermelho">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Posições (separadas por vírgula)</label>
+                        <input type="text" name="positions" value="{{ print.positions|join(', ') if print else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="Peito, Costas, Manga">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Técnica</label>
+                        <select name="technique" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                            <option value="silk" {{ 'selected' if print and print.technique == 'silk' else '' }}>Silk Screen</option>
+                            <option value="dtf" {{ 'selected' if print and print.technique == 'dtf' else '' }}>DTF</option>
+                            <option value="bordado" {{ 'selected' if print and print.technique == 'bordado' else '' }}>Bordado</option>
+                            <option value="sublimacao" {{ 'selected' if print and print.technique == 'sublimacao' else '' }}>Sublimação</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Dimensões</label>
+                        <input type="text" name="dimensions" value="{{ print.dimensions if print else '' }}"
+                            class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="10x10cm">
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="active" id="active" {{ 'checked' if print and print.active else 'checked' if not print else '' }}
+                        class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300 rounded">
+                    <label for="active" class="text-sm text-gray-700">Estampa ativa</label>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    {{ 'Atualizar' if print else 'Criar' }} Estampa
+                </button>
+                <a href="{{ url_for('prints') }}" class="px-6 py-2 rounded-lg font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
