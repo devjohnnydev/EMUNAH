@@ -694,15 +694,23 @@ def edit_quote(id):
         quote.print_position = request.form.get('print_position')
         quote.print_size = request.form.get('print_size')
         quote.print_color = request.form.get('print_color')
-        quote.total_quantity = int(request.form.get('total_quantity', 0))
-        quote.unit_price = float(request.form.get('unit_price')) if request.form.get('unit_price') else None
-        quote.total_price = float(request.form.get('total_price')) if request.form.get('total_price') else None
-        quote.down_payment_percent = int(request.form.get('down_payment_percent', 40))
+        total_qty_str = request.form.get('total_quantity', '0')
+        quote.total_quantity = int(total_qty_str) if total_qty_str else 0
+        
+        unit_price_str = request.form.get('unit_price', '')
+        quote.unit_price = float(unit_price_str) if unit_price_str else None
+        
+        total_price_str = request.form.get('total_price', '')
+        quote.total_price = float(total_price_str) if total_price_str else None
+        
+        down_pmt_str = request.form.get('down_payment_percent', '40')
+        quote.down_payment_percent = int(down_pmt_str) if down_pmt_str else 40
         if quote.total_price:
             quote.down_payment_value = float(quote.total_price) * (quote.down_payment_percent / 100)
         quote.pix_key = request.form.get('pix_key', '11998896725')
         quote.delivery_method = request.form.get('delivery_method', 'delivery')
-        quote.delivery_days = int(request.form.get('delivery_days')) if request.form.get('delivery_days') else None
+        delivery_days_str = request.form.get('delivery_days', '')
+        quote.delivery_days = int(delivery_days_str) if delivery_days_str else None
         if quote.delivery_days:
             quote.delivery_date_estimated = datetime.utcnow() + timedelta(days=quote.delivery_days)
         quote.status = request.form.get('status', quote.status)
