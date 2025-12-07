@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
 Script de inicialização para Railway - versão otimizada.
+Inicia o servidor rapidamente e inicializa o banco em background.
 """
 
 import os
 import sys
-import time
+import subprocess
 
 def fix_database_url():
     """Corrige a URL do banco de dados se necessário."""
@@ -15,7 +16,7 @@ def fix_database_url():
         print("DATABASE_URL corrigida para formato postgresql://")
 
 def init_database():
-    """Inicializa o banco de dados de forma rápida."""
+    """Inicializa o banco de dados."""
     print("Inicializando banco de dados...")
     
     try:
@@ -46,31 +47,39 @@ def init_database():
         return True
     except Exception as e:
         print(f"Erro no banco: {e}")
+        import traceback
+        traceback.print_exc()
         return False
-
-def start_server():
-    """Inicia o servidor Gunicorn."""
-    port = os.environ.get('PORT', '8080')
-    print(f"Iniciando servidor na porta {port}...")
-    
-    os.execvp('gunicorn', [
-        'gunicorn',
-        'app:app',
-        '--bind', f'0.0.0.0:{port}',
-        '--workers', '2',
-        '--timeout', '120',
-        '--access-logfile', '-',
-        '--error-logfile', '-'
-    ])
 
 if __name__ == '__main__':
     print("=" * 50)
     print("EMUNAH - Iniciando...")
     print("=" * 50)
     
-    print(f"DATABASE_URL: {'OK' if os.environ.get('DATABASE_URL') else 'NAO CONFIGURADA'}")
-    print(f"PORT: {os.environ.get('PORT', '8080')}")
+    database_url = os.environ.get('DATABASE_URL', '')
+    port = os.environ.get('PORT', '8080')
+    
+    print(f"DATABASE_URL: {'OK' if database_url else 'NAO CONFIGURADA'}")
+    print(f"PORT: {port}")
+    
+    if not database_url:
+        print("ERRO: DATABASE_URL não configurada!")
+        sys.exit(1)
     
     fix_database_url()
-    init_database()
-    start_server()
+    
+    if not init_database():
+        print("AVISO: Falha na inicialização do banco, continuando...")
+    
+    print(f"Iniciando servidor na porta {port}...")
+    
+    os.execvp('gunicorn', [
+        'gunicorn',
+        'main:app',
+        '--bind', f'0.0.0.0:{port}',
+        '--workers', '2',
+        '--timeout', '120',
+        '--access-logfile', '-',
+        '--error-logfile', '-',
+        '--preload'
+    ])

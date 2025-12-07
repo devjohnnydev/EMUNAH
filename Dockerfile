@@ -30,8 +30,12 @@ COPY . .
 # Criar diretórios de upload se necessário
 RUN mkdir -p static/uploads/quotes static/uploads/prints
 
-# Expor porta
+# Expor porta (Railway usa variável PORT)
 EXPOSE 8080
 
-# Comando de inicialização
-CMD ["python3", "start_railway.py"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8080}/login || exit 1
+
+# Comando de inicialização - usa gunicorn diretamente com main:app
+CMD gunicorn main:app --bind 0.0.0.0:${PORT:-8080} --workers 2 --timeout 120 --access-logfile - --error-logfile -
