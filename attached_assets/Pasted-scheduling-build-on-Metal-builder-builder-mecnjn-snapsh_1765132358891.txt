@@ -1,0 +1,92 @@
+scheduling build on Metal builder "builder-mecnjn"
+[snapshot] received sha256:8a783e3238cad98807e84fbc109e117756b209ba845834befdd2d619fc98d59f md5:157d45499a83b16778d5b04a32bbdf80
+receiving snapshot
+10.3 MB
+2.5s
+found 'Dockerfile' at 'Dockerfile'
+found 'railway.json' at 'railway.json'
+analyzing snapshot
+10.3 MB
+103ms
+uploading snapshot
+10.3 MB
+256ms
+scheduling build on Metal builder "builder-mecnjn"
+fetched snapshot sha256:8a783e3238cad98807e84fbc109e117756b209ba845834befdd2d619fc98d59f (11 MB bytes)
+fetching snapshot
+10.3 MB
+423ms
+unpacking archive
+12 MB
+150ms
+
+internal
+load build definition from Dockerfile
+0ms
+
+internal
+load metadata for docker.io/library/python:3.11-slim
+286ms
+
+internal
+load .dockerignore
+0ms
+
+1
+FROM docker.io/library/python:3.11-slim@sha256:193fdd0bbcb3d2ae612bd6cc3548d2f7c78d65b549fcaa8af75624c47474444d
+22ms
+
+internal
+load build context
+0ms
+
+7
+RUN mkdir -p static/uploads/quotes static/uploads/prints cached
+0ms
+
+6
+COPY . . cached
+0ms
+
+5
+RUN pip install --no-cache-dir -r requirements.txt cached
+0ms
+
+4
+COPY requirements.txt . cached
+0ms
+
+3
+WORKDIR /app cached
+0ms
+
+2
+RUN apt-get update && apt-get install -y --no-install-recommends     libpango-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf-2.0-0     libffi-dev     shared-mime-info     libcairo2     libgirepository1.0-dev     gir1.2-pango-1.0     fonts-liberation     libpq-dev     && rm -rf /var/lib/apt/lists/* cached
+0ms
+
+exporting to docker image format
+1s
+containerimage.digest: sha256:9c284263e2085cea7cac997ae845d37a5ab63101b38944cf4a349cd99b3f9ca5
+containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6OWMyODQyNjNlMjA4NWNlYTdjYWM5OTdhZTg0NWQzN2E1YWI2MzEwMWIzODk0NGNmNGEzNDljZDk5YjNmOWNhNSIsInNpemUiOjIxOTYsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNS0xMi0wN1QxODoxNDoyM1oifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
+containerimage.config.digest: sha256:0b475852256936f3cd13f50e5b40358a481d5bc6886afb322d0f44b049ebc732
+image push
+226.6 MB / 226.6 MB
+2.0s
+ 
+====================
+Starting Healthcheck
+====================
+Path: /login
+Retry window: 1m40s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 1m29s
+Attempt #2 failed with service unavailable. Continuing to retry for 1m28s
+Attempt #3 failed with service unavailable. Continuing to retry for 1m26s
+Attempt #4 failed with service unavailable. Continuing to retry for 1m22s
+Attempt #5 failed with service unavailable. Continuing to retry for 1m14s
+Attempt #6 failed with service unavailable. Continuing to retry for 58s
+Attempt #7 failed with service unavailable. Continuing to retry for 28s
+ 
+1/1 replicas never became healthy!
+
+Healthcheck failed!

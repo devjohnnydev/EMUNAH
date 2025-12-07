@@ -10,3 +10,17 @@ email-validator>=2.0.0
 weasyprint>=60.0
 pillow>=9.0.0
 qrcode>=7.0.0
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+email-validator
+flask
+flask-login
+flask-migrate
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+python-dotenv
+werkzeug
