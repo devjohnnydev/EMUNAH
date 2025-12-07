@@ -1,0 +1,36 @@
+# Dockerfile para deploy no Railway - Projeto Flask Python
+FROM python:3.11-slim
+
+# Instalar dependências do sistema para WeasyPrint e outras libs
+RUN apt-get update && apt-get install -y \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    shared-mime-info \
+    libcairo2 \
+    libgirepository1.0-dev \
+    gir1.2-pango-1.0 \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar apenas requirements primeiro (para cache de camadas)
+COPY requirements.txt .
+
+# Instalar dependências Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o resto do código
+COPY . .
+
+# Criar diretórios de upload se necessário
+RUN mkdir -p static/uploads/quotes static/uploads/prints
+
+# Expor porta
+EXPOSE $PORT
+
+# Comando de inicialização
+CMD python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
