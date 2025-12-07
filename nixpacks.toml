@@ -1,14 +1,10 @@
 # Nixpacks configuration for Railway deployment
-providers = ["python"]
 
 [variables]
 NIXPACKS_PYTHON_VERSION = "3.11"
 
 [phases.setup]
-nixPkgs = ["python311Full", "python311Packages.pip", "pango", "fontconfig", "cairo", "gdk-pixbuf", "glib", "gobject-introspection"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
+nixPkgs = ["pango", "fontconfig", "cairo", "gdk-pixbuf", "glib", "gobject-introspection"]
 
 [start]
 cmd = "python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
