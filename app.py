@@ -976,13 +976,17 @@ def download_quote_pdf(id):
     
     logo_url = f"file://{logo_path}"
     
-    pix_qr_code = generate_pix_qrcode(
-        pix_key=quote.pix_key or '11998896725',
-        amount=float(quote.down_payment_value) if quote.down_payment_value else None,
-        name="Emunah",
-        city="Sao Paulo",
-        description=f"ORC{quote.quote_number}"
-    )
+    pix_qr_path = os.path.join(app.root_path, 'static', 'images', 'pix_qrcode.png')
+    if os.path.exists(pix_qr_path):
+        pix_qr_code = f"file://{pix_qr_path}"
+    else:
+        pix_qr_code = generate_pix_qrcode(
+            pix_key=quote.pix_key or '11998896725',
+            amount=float(quote.down_payment_value) if quote.down_payment_value else None,
+            name="Emunah",
+            city="Sao Paulo",
+            description=f"ORC{quote.quote_number}"
+        )
     
     quote_image_url = None
     if quote.image_path:

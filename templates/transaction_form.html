@@ -16,9 +16,18 @@
         <form method="POST">
             <div class="grid gap-4">
                 <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="text-sm text-gray-500">Pedido</div>
-                    <div class="text-lg font-medium text-gray-900">{{ order.order_number }}</div>
-                    <div class="text-sm text-primary mt-1">Valor Total: R$ {{ "{:,.2f}".format(order.total_value).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex-1">
+                            <div class="text-sm text-gray-500">Pedido</div>
+                            <div class="text-lg font-medium text-gray-900">{{ order.order_number }}</div>
+                            <div class="text-sm text-primary mt-1">Valor Total: R$ {{ "{:,.2f}".format(order.total_value).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="text-xs text-gray-500 mt-2">PIX: 11998896725</div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <img src="{{ url_for('static', filename='images/pix_qrcode.png') }}" alt="QR Code PIX" class="w-24 h-24 rounded border border-gray-200">
+                            <p class="text-xs text-gray-500 text-center mt-1">QR Code PIX</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
