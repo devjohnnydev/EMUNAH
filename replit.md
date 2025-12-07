@@ -38,8 +38,7 @@ As credenciais são configuradas via variáveis de ambiente:
 - Design responsivo
 
 **Banco de Dados:**
-- SQLite (desenvolvimento local)
-- PostgreSQL (produção via Railway/Neon)
+- PostgreSQL (Replit e Railway/Neon)
 
 ### Estrutura de Arquivos
 
@@ -143,6 +142,8 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Atualizações Recentes
 
+- **07/12/2024**: Limpeza do projeto - removidos arquivos Node.js desnecessários
+- **07/12/2024**: Banco de dados PostgreSQL configurado via Replit
 - **07/12/2024**: Upload de imagens para estampas (URL ou arquivo local) com limpeza automática de arquivos
 - **07/12/2024**: Dashboard aprimorado com 10+ métricas e gráficos Chart.js (receita, pedidos por mês/status, cotações, etc.)
 - **07/12/2024**: Script SQL completo em database/create_tables.sql para todas as tabelas
