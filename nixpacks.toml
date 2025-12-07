@@ -1,8 +1,9 @@
-[phases.setup]
-nixPkgs = ["python311", "pango", "fontconfig", "cairo", "gdk-pixbuf", "glib"]
+# Nixpacks configuration for Railway deployment
+# Explicitly specify Python provider to ensure pip is available
+providers = ["python"]
 
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
+[phases.setup]
+nixPkgs = ["pango", "fontconfig", "cairo", "gdk-pixbuf", "glib", "gobject-introspection"]
 
 [start]
 cmd = "python database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
