@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gir1.2-pango-1.0 \
     fonts-liberation \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Definir diretório de trabalho
@@ -33,9 +34,5 @@ RUN mkdir -p static/uploads/quotes static/uploads/prints
 # Expor porta (Railway usa variável PORT)
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8080}/login || exit 1
-
-# Comando de inicialização - usa gunicorn diretamente com main:app
-CMD gunicorn main:app --bind 0.0.0.0:${PORT:-8080} --workers 2 --timeout 120 --access-logfile - --error-logfile -
+# Comando de inicialização em formato JSON
+CMD ["sh", "-c", "gunicorn main:app --bind 0.0.0.0:${PORT:-8080} --workers 2 --timeout 120 --access-logfile - --error-logfile -"]

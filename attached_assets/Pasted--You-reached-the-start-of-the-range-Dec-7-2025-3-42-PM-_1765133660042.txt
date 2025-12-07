@@ -1,0 +1,93 @@
+
+
+You reached the start of the range
+Dec 7, 2025, 3:42 PM
+scheduling build on Metal builder "builder-llwdsp"
+[snapshot] received sha256:62f993620fdc4e1aa4404b32f1da1eea59d8ed14b1d929a4f229967dc4a47eb2 md5:b207dbb27f164b75ce2066f6326e524d
+receiving snapshot
+10.2 MB
+2.9s
+found 'Dockerfile' at 'Dockerfile'
+found 'railway.json' at 'railway.json'
+analyzing snapshot
+10.2 MB
+99ms
+uploading snapshot
+10.2 MB
+327ms
+scheduling build on Metal builder "builder-llwdsp"
+fetching snapshot
+10.2 MB
+523ms
+fetched snapshot sha256:62f993620fdc4e1aa4404b32f1da1eea59d8ed14b1d929a4f229967dc4a47eb2 (11 MB bytes)
+unpacking archive
+11.4 MB
+128ms
+
+internal
+load build definition from Dockerfile
+0ms
+
+internal
+load metadata for docker.io/library/python:3.11-slim
+156ms
+
+internal
+load .dockerignore
+0ms
+JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 41)(https://docs.docker.com/go/dockerfile/rule/json-args-recommended/)
+ details: JSON arguments recommended for ENTRYPOINT/CMD to prevent unintended behavior related to OS signals
+
+1
+FROM docker.io/library/python:3.11-slim@sha256:193fdd0bbcb3d2ae612bd6cc3548d2f7c78d65b549fcaa8af75624c47474444d
+29ms
+
+internal
+load build context
+0ms
+
+5
+RUN pip install --no-cache-dir -r requirements.txt cached
+0ms
+
+4
+COPY requirements.txt . cached
+0ms
+
+3
+WORKDIR /app cached
+0ms
+
+2
+RUN apt-get update && apt-get install -y --no-install-recommends     libpango-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf-2.0-0     libffi-dev     shared-mime-info     libcairo2     libgirepository1.0-dev     gir1.2-pango-1.0     fonts-liberation     libpq-dev     && rm -rf /var/lib/apt/lists/* cached
+0ms
+
+6
+COPY . .
+718ms
+
+7
+RUN mkdir -p static/uploads/quotes static/uploads/prints
+521ms
+
+exporting to docker image format
+3s
+containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6MGQ5ZTc4OGIzYWZiMTMyMTM0MmI3MzJlNmFhNGE4NjJmMjgxNzgzMjkwY2I5NDVlMmUyMTMzZTg0ZDUzYzI4MSIsInNpemUiOjIxOTYsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNS0xMi0wN1QxODo0ODozMloifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
+containerimage.config.digest: sha256:cd6edcda7c01a473aa2a5b436f248a0b873fff717dadec1c5beb740c8c719a6f
+containerimage.digest: sha256:0d9e788b3afb1321342b732e6aa4a862f281783290cb945e2e2133e84d53c281
+image push
+226.6 MB / 226.6 MB
+15.7s
+ 
+====================
+Starting Healthcheck
+====================
+Path: /login
+Retry window: 10m0s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 9m49s
+Attempt #2 failed with service unavailable. Continuing to retry for 9m48s
+Attempt #3 failed with service unavailable. Continuing to retry for 9m46s
+Attempt #4 failed with service unavailable. Continuing to retry for 9m42s
+Attempt #5 failed with service unavailable. Continuing to retry for 9m34s
+Attempt #6 failed
