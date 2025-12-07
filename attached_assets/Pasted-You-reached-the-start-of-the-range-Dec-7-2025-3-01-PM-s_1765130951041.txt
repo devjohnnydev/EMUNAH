@@ -1,0 +1,90 @@
+You reached the start of the range
+Dec 7, 2025, 3:01 PM
+scheduling build on Metal builder "builder-mecnjn"
+[snapshot] received sha256:c3f5a775227d92d1af9874c0f4855831260a781c01c0965441e59ba8da80ed3f md5:3ecd33e07eb1c68066dae8dd73a644f7
+receiving snapshot
+10.3 MB
+2.4s
+found 'Dockerfile' at 'Dockerfile'
+found 'railway.json' at 'railway.json'
+analyzing snapshot
+10.3 MB
+91ms
+uploading snapshot
+10.3 MB
+342ms
+scheduling build on Metal builder "builder-mecnjn"
+fetched snapshot sha256:c3f5a775227d92d1af9874c0f4855831260a781c01c0965441e59ba8da80ed3f (11 MB bytes)
+fetching snapshot
+10.3 MB
+610ms
+unpacking archive
+12 MB
+141ms
+
+internal
+load build definition from Dockerfile
+1ms
+
+internal
+load metadata for docker.io/library/python:3.11-slim
+285ms
+
+internal
+load .dockerignore
+0ms
+
+1
+FROM docker.io/library/python:3.11-slim@sha256:193fdd0bbcb3d2ae612bd6cc3548d2f7c78d65b549fcaa8af75624c47474444d
+17ms
+
+internal
+load build context
+0ms
+
+7
+RUN mkdir -p static/uploads/quotes static/uploads/prints cached
+0ms
+
+6
+COPY . . cached
+0ms
+
+5
+RUN pip install --no-cache-dir -r requirements.txt cached
+0ms
+
+4
+COPY requirements.txt . cached
+0ms
+
+3
+WORKDIR /app cached
+0ms
+
+2
+RUN apt-get update && apt-get install -y --no-install-recommends     libpango-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf-2.0-0     libffi-dev     shared-mime-info     libcairo2     libgirepository1.0-dev     gir1.2-pango-1.0     fonts-liberation     && rm -rf /var/lib/apt/lists/* cached
+0ms
+
+exporting to docker image format
+1s
+containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6YzMzYWQ0MDViOWY3NzkzYjU0MDVmYWE3YjNmNzg1YTc1OWM4OWRjODk4NDhkOWQyZTdjYzZhMjYzNjg3MWQyNSIsInNpemUiOjIxOTYsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNS0xMi0wN1QxODowNjozM1oifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
+containerimage.config.digest: sha256:7fa9b85201816509efaaa106b7af0d1e19ff4fa2aa841fe3b49e2577e6408295
+containerimage.digest: sha256:c33ad405b9f7793b5405faa7b3f785a759c89dc89848d9d2e7cc6a2636871d25
+image push
+221.4 MB / 221.4 MB
+2.0s
+ 
+====================
+Starting Healthcheck
+====================
+Path: /login
+Retry window: 1m40s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 1m29s
+Attempt #2 failed with service unavailable. Continuing to retry for 1m28s
+Attempt #3 failed with service unavailable. Continuing to retry for 1m26s
+Attempt #4 failed with service unavailable. Continuing to retry for 1m22s
+Attempt #5 failed with service unavailable. Continuing to retry for 1m14s
+Attempt #6 failed with service unavailable. Continuing to retry for 58s
+Attempt #7 failed with service unavailable. Continuing to retry for 28s
