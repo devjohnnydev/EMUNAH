@@ -30,7 +30,7 @@ COPY . .
 RUN mkdir -p static/uploads/quotes static/uploads/prints
 
 # Expor porta
-EXPOSE $PORT
+EXPOSE 8080
 
-# Comando de inicialização
-CMD python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+# Comando de inicialização em formato JSON
+CMD ["/bin/bash", "-c", "python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:${PORT:-8080} --workers 2 --timeout 120"]
