@@ -2,13 +2,10 @@
 providers = ["python"]
 
 [variables]
-PYTHON_VERSION = "3.11"
+NIXPACKS_PYTHON_VERSION = "3.11"
 
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "pango", "fontconfig", "cairo", "gdk-pixbuf", "glib", "gobject-introspection"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
+nixPkgs = ["pango", "fontconfig", "cairo", "gdk-pixbuf", "glib", "gobject-introspection"]
 
 [start]
 cmd = "python database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
