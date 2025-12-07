@@ -1,0 +1,71 @@
+Load more
+
+2
+RUN apt-get update && apt-get install -y --no-install-recommends     libpango-1.0-0     libpangocairo-1.0-0     libgdk-pixbuf-2.0-0     libffi-dev     shared-mime-info     libcairo2     libgirepository1.0-dev     gir1.2-pango-1.0     fonts-liberation     libpq-dev     curl     && rm -rf /var/lib/apt/lists/*
+45s
+Processing triggers for libc-bin (2.41-12) ...
+
+3
+WORKDIR /app
+1s
+
+4
+COPY requirements.txt .
+1s
+
+5
+RUN pip install --no-cache-dir -r requirements.txt
+14s
+[notice] To update, run: pip install --upgrade pip
+
+6
+COPY . .
+735ms
+
+7
+RUN mkdir -p static/uploads/quotes static/uploads/prints
+704ms
+
+exporting to docker image format
+9s
+containerimage.digest: sha256:1bfcd934a56de9d9ec392c85f2c9d89b69e0f19c274f8af9c6599a3b50f45aab
+containerimage.descriptor: eyJtZWRpYVR5cGUiOiJhcHBsaWNhdGlvbi92bmQub2NpLmltYWdlLm1hbmlmZXN0LnYxK2pzb24iLCJkaWdlc3QiOiJzaGEyNTY6MWJmY2Q5MzRhNTZkZTlkOWVjMzkyYzg1ZjJjOWQ4OWI2OWUwZjE5YzI3NGY4YWY5YzY1OTlhM2I1MGY0NWFhYiIsInNpemUiOjIxOTYsImFubm90YXRpb25zIjp7Im9yZy5vcGVuY29udGFpbmVycy5pbWFnZS5jcmVhdGVkIjoiMjAyNS0xMi0wN1QxODo1ODo0NVoifSwicGxhdGZvcm0iOnsiYXJjaGl0ZWN0dXJlIjoiYW1kNjQiLCJvcyI6ImxpbnV4In19
+containerimage.config.digest: sha256:fceead4f43882ab779efb773c212982512533dcab783d7f0d75005e7f955b5fb
+image push
+230.1 MB / 230.2 MB
+21.3s
+ 
+====================
+Starting Healthcheck
+====================
+Path: /login
+Retry window: 10m0s
+ 
+Attempt #1 failed with service unavailable. Continuing to retry for 9m49s
+Attempt #2 failed with service unavailable. Continuing to retry for 9m48s
+Attempt #3 failed with service unavailable. Continuing to retry for 9m46s
+Attempt #4 failed with service unavailable. Continuing to retry for 9m42s
+Attempt #5 failed with service unavailable. Continuing to retry for 9m34s
+Attempt #6 failed with service unavailable. Continuing to retry for 9m18s
+Attempt #7 failed with service unavailable. Continuing to retry for 8m48s
+Attempt #8 failed with service unavailable. Continuing to retry for 8m18s
+Attempt #9 failed with service unavailable. Continuing to retry for 7m48s
+Attempt #10 failed with service unavailable. Continuing to retry for 7m18s
+Attempt #11 failed with service unavailable. Continuing to retry for 6m48s
+Attempt #12 failed with service unavailable. Continuing to retry for 6m18s
+Attempt #13 failed with service unavailable. Continuing to retry for 5m47s
+Attempt #14 failed with service unavailable. Continuing to retry for 5m17s
+Attempt #15 failed with service unavailable. Continuing to retry for 4m47s
+Attempt #16 failed with service unavailable. Continuing to retry for 4m17s
+Attempt #17 failed with service unavailable. Continuing to retry for 3m47s
+Attempt #18 failed with service unavailable. Continuing to retry for 3m17s
+Attempt #19 failed with service unavailable. Continuing to retry for 2m47s
+Attempt #20 failed with service unavailable. Continuing to retry for 2m17s
+Attempt #21 failed with service unavailable. Continuing to retry for 1m47s
+Attempt #22 failed with service unavailable. Continuing to retry for 1m17s
+Attempt #23 failed with service unavailable. Continuing to retry for 47s
+Attempt #24 failed with service unavailable. Continuing to retry for 17s
+ 
+1/1 replicas never became healthy!
+
+Healthcheck failed!

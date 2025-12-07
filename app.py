@@ -1822,97 +1822,107 @@ def api_metrics():
 # ==================== INIT ====================
 
 def init_db():
-    with app.app_context():
-        db.create_all()
-        
-        admin_email = os.environ.get('ADMIN_EMAIL')
-        admin_password = os.environ.get('ADMIN_PASSWORD')
-        admin_name = os.environ.get('ADMIN_NAME', 'Administrador')
-        admin_phone = os.environ.get('ADMIN_PHONE')
-        
-        if not User.query.first():
-            if admin_email and admin_password:
-                admin = User(
-                    name=admin_name,
-                    email=admin_email,
-                    role='ADMIN',
-                    phone=admin_phone
+    """Initialize database with error handling for Railway deployment."""
+    try:
+        with app.app_context():
+            logging.info("Initializing database...")
+            db.create_all()
+            logging.info("Database tables created successfully.")
+            
+            admin_email = os.environ.get('ADMIN_EMAIL')
+            admin_password = os.environ.get('ADMIN_PASSWORD')
+            admin_name = os.environ.get('ADMIN_NAME', 'Administrador')
+            admin_phone = os.environ.get('ADMIN_PHONE')
+            
+            if not User.query.first():
+                if admin_email and admin_password:
+                    admin = User(
+                        name=admin_name,
+                        email=admin_email,
+                        role='ADMIN',
+                        phone=admin_phone
+                    )
+                    admin.set_password(admin_password)
+                    logging.info(f'Admin user created: {admin_email}')
+                else:
+                    temp_password = os.urandom(8).hex()
+                    admin = User(
+                        name='Admin Temporário',
+                        email='admin@emunah.local',
+                        role='ADMIN'
+                    )
+                    admin.set_password(temp_password)
+                    logging.warning('='*50)
+                    logging.warning('ATENÇÃO: Credenciais temporárias criadas!')
+                    logging.warning(f'Email: admin@emunah.local')
+                    logging.warning(f'Senha: {temp_password}')
+                    logging.warning('Configure ADMIN_EMAIL e ADMIN_PASSWORD nas variáveis de ambiente!')
+                    logging.warning('='*50)
+                db.session.add(admin)
+                
+                # Sample suppliers
+                supplier1 = Supplier(
+                    name='Confecções Premium',
+                    contact_name='João Silva',
+                    email='contato@premium.com',
+                    phone='11999887766',
+                    production_time_days=7,
+                    rating=4.8,
+                    payment_method='PIX'
                 )
-                admin.set_password(admin_password)
-                print(f'Admin user created: {admin_email}')
+                supplier2 = Supplier(
+                    name='Têxtil Brasil',
+                    contact_name='Maria Santos',
+                    email='maria@textilbrasil.com',
+                    phone='11988776655',
+                    production_time_days=10,
+                    rating=4.5,
+                    payment_method='Boleto'
+                )
+                db.session.add(supplier1)
+                db.session.add(supplier2)
+                
+                # Sample prints
+                print1 = Print(
+                    name='Logo Emunah',
+                    description='Logo oficial da marca',
+                    colors=['Preto', 'Branco'],
+                    positions=['Peito', 'Costas'],
+                    technique='silk',
+                    dimensions='10x10cm',
+                    active=True
+                )
+                print2 = Print(
+                    name='Estampa Evangélica',
+                    description='Design com mensagem bíblica',
+                    colors=['Branco', 'Dourado'],
+                    positions=['Costas', 'Frente'],
+                    technique='dtf',
+                    dimensions='30x40cm',
+                    active=True
+                )
+                db.session.add(print1)
+                db.session.add(print2)
+                
+                # Sample client
+                client1 = Client(
+                    name='Igreja Nova Vida',
+                    cpf_cnpj='12.345.678/0001-90',
+                    email='contato@igrejanovavida.com',
+                    phone='11987654321',
+                    city='São Paulo',
+                    state='SP'
+                )
+                db.session.add(client1)
+                
+                db.session.commit()
+                logging.info('Database initialized with sample data.')
             else:
-                temp_password = os.urandom(8).hex()
-                admin = User(
-                    name='Admin Temporário',
-                    email='admin@emunah.local',
-                    role='ADMIN'
-                )
-                admin.set_password(temp_password)
-                print('='*50)
-                print('ATENÇÃO: Credenciais temporárias criadas!')
-                print(f'Email: admin@emunah.local')
-                print(f'Senha: {temp_password}')
-                print('Configure ADMIN_EMAIL e ADMIN_PASSWORD nas variáveis de ambiente!')
-                print('='*50)
-            db.session.add(admin)
-            
-            # Sample suppliers
-            supplier1 = Supplier(
-                name='Confecções Premium',
-                contact_name='João Silva',
-                email='contato@premium.com',
-                phone='11999887766',
-                production_time_days=7,
-                rating=4.8,
-                payment_method='PIX'
-            )
-            supplier2 = Supplier(
-                name='Têxtil Brasil',
-                contact_name='Maria Santos',
-                email='maria@textilbrasil.com',
-                phone='11988776655',
-                production_time_days=10,
-                rating=4.5,
-                payment_method='Boleto'
-            )
-            db.session.add(supplier1)
-            db.session.add(supplier2)
-            
-            # Sample prints
-            print1 = Print(
-                name='Logo Emunah',
-                description='Logo oficial da marca',
-                colors=['Preto', 'Branco'],
-                positions=['Peito', 'Costas'],
-                technique='silk',
-                dimensions='10x10cm',
-                active=True
-            )
-            print2 = Print(
-                name='Estampa Evangélica',
-                description='Design com mensagem bíblica',
-                colors=['Branco', 'Dourado'],
-                positions=['Costas', 'Frente'],
-                technique='dtf',
-                dimensions='30x40cm',
-                active=True
-            )
-            db.session.add(print1)
-            db.session.add(print2)
-            
-            # Sample client
-            client1 = Client(
-                name='Igreja Nova Vida',
-                cpf_cnpj='12.345.678/0001-90',
-                email='contato@igrejanovavida.com',
-                phone='11987654321',
-                city='São Paulo',
-                state='SP'
-            )
-            db.session.add(client1)
-            
-            db.session.commit()
-            print('Database initialized with sample data.')
+                logging.info('Database already initialized.')
+    except Exception as e:
+        logging.error(f'Error initializing database: {e}')
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == '__main__':
