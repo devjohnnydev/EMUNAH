@@ -59,8 +59,10 @@ As credenciais são configuradas via variáveis de ambiente:
 │   ├── budgets.html, budget_form.html
 │   └── transactions.html
 ├── static/
-│   ├── images/      # Logos EMUNAH
-│   └── uploads/quotes/  # Imagens de referência das cotações
+│   ├── images/      # Logos EMUNAH (logo_emunah.png, logo_fundo_bege.png)
+│   └── uploads/
+│       ├── quotes/  # Imagens de referência das cotações
+│       └── prints/  # Imagens das estampas (upload local)
 ├── database/        # Scripts de banco de dados
 │   ├── init_db.sql      # Script SQL para criar tabelas
 │   ├── seed_data.sql    # Dados de exemplo
@@ -141,9 +143,12 @@ gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
 
 ## Atualizações Recentes
 
+- **07/12/2024**: Upload de imagens para estampas (URL ou arquivo local) com limpeza automática de arquivos
+- **07/12/2024**: Dashboard aprimorado com 10+ métricas e gráficos Chart.js (receita, pedidos por mês/status, cotações, etc.)
+- **07/12/2024**: Script SQL completo em database/create_tables.sql para todas as tabelas
+- **07/12/2024**: Configuração Railway otimizada (railway.json, Procfile, nixpacks.toml)
 - **03/12/2024**: Upload de imagens de referência para cotações (além de URLs)
 - **03/12/2024**: QR Code PIX integrado ao PDF de orçamento
-- **03/12/2024**: Configuração Railway otimizada com nixpacks.toml
 - **03/12/2024**: Sistema profissional de orçamentos em PDF com logo Emunah e mensagem bíblica
 - **03/12/2024**: Compartilhamento de orçamentos via WhatsApp com mensagem formatada
 - **03/12/2024**: Envio de orçamento por email com PDF anexo
