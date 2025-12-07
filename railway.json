@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120",
+    "startCommand": "python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120",
     "healthcheckPath": "/login",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",

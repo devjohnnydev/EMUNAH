@@ -1,1 +1,1 @@
-web: python database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+web: python3 database/init_railway.py && gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
