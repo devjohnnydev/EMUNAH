@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Dashboard{% endblock %}
-{% block header_title %}Visão Geral{% endblock %}
+{% block header_title %}Visao Geral{% endblock %}
 
 {% block content %}
 <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
@@ -16,7 +16,16 @@
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">Pedidos Concluídos</span>
+            <span class="text-sm text-gray-500">Faturamento do Mes</span>
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-primary">R$ {{ "%.2f"|format(metrics.revenue_this_month) }}</div>
+        <p class="text-xs text-blue-600 mt-1">Este mes</p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-gray-500">Pedidos Concluidos</span>
             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="text-2xl font-serif font-bold text-primary">{{ metrics.completed_orders }}</div>
@@ -25,25 +34,16 @@
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">Em Produção</span>
-            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <span class="text-sm text-gray-500">Em Producao</span>
+            <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
         </div>
         <div class="text-2xl font-serif font-bold text-primary">{{ metrics.orders_in_production }}</div>
-        <p class="text-xs text-blue-600 mt-1">Pedidos ativos</p>
+        <p class="text-xs text-yellow-600 mt-1">Pedidos ativos</p>
     </div>
     
     <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">Cotações Pendentes</span>
-            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div class="text-2xl font-serif font-bold text-primary">{{ metrics.pending_quotes }}</div>
-        <p class="text-xs text-amber-600 mt-1">Aguardando aprovação</p>
-    </div>
-    
-    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">Ticket Médio</span>
+            <span class="text-sm text-gray-500">Ticket Medio</span>
             <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div class="text-2xl font-serif font-bold text-primary">R$ {{ "%.2f"|format(metrics.average_ticket) }}</div>
@@ -51,30 +51,155 @@
     </div>
 </div>
 
-<div class="grid gap-4 md:grid-cols-3 mt-6">
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mt-4">
+    <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-5 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-amber-700">Cotacoes Pendentes</span>
+            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-amber-800">{{ metrics.pending_quotes }}</div>
+        <p class="text-xs text-amber-600 mt-1">Aguardando aprovacao</p>
+    </div>
+    
+    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-blue-700">Total Cotacoes</span>
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-blue-800">{{ metrics.total_quotes }}</div>
+        <p class="text-xs text-blue-600 mt-1">{{ metrics.quotes_this_month }} este mes</p>
+    </div>
+    
+    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-purple-700">Total Pedidos</span>
+            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-purple-800">{{ metrics.total_orders }}</div>
+        <p class="text-xs text-purple-600 mt-1">{{ metrics.orders_this_week }} esta semana</p>
+    </div>
+    
+    <div class="bg-gradient-to-br from-teal-50 to-teal-100 p-5 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-teal-700">Fornecedores</span>
+            <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-teal-800">{{ metrics.total_suppliers }}</div>
+        <p class="text-xs text-teal-600 mt-1">Cadastrados</p>
+    </div>
+    
+    <div class="bg-gradient-to-br from-pink-50 to-pink-100 p-5 rounded-xl shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm text-pink-700">Taxa Conversao</span>
+            <svg class="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+        <div class="text-2xl font-serif font-bold text-pink-800">{{ metrics.conversion_rate }}%</div>
+        <p class="text-xs text-pink-600 mt-1">Cotacoes aprovadas</p>
+    </div>
+</div>
+
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500">Clientes</p>
+                <p class="text-2xl font-bold text-gray-800">{{ metrics.total_clients }}</p>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500">Produtos Ativos</p>
+                <p class="text-2xl font-bold text-gray-800">{{ metrics.total_products }}</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500">Valor Recebido</p>
+                <p class="text-xl font-bold text-gray-800">R$ {{ "%.2f"|format(metrics.total_paid) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-orange-500">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500">A Receber</p>
+                <p class="text-xl font-bold text-gray-800">R$ {{ "%.2f"|format(metrics.total_pending_payment) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-2 mt-6">
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Pedidos por Mes</h3>
+        <canvas id="ordersChart" height="200"></canvas>
+    </div>
+    
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Faturamento por Mes</h3>
+        <canvas id="revenueChart" height="200"></canvas>
+    </div>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-3 mt-6">
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Status dos Pedidos</h3>
+        <canvas id="ordersStatusChart" height="200"></canvas>
+    </div>
+    
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Status das Cotacoes</h3>
+        <canvas id="quotesStatusChart" height="200"></canvas>
+    </div>
+    
     <div class="bg-gradient-to-br from-primary/5 to-transparent p-6 rounded-xl">
         <h3 class="font-serif text-lg font-bold text-primary mb-4 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            Ações Rápidas
+            Acoes Rapidas
         </h3>
         <div class="space-y-2">
             <a href="{{ url_for('new_quote') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
-                <span class="font-medium text-sm">Nova Cotação</span>
-                <p class="text-xs text-gray-500">Criar orçamento para cliente</p>
+                <span class="font-medium text-sm">Nova Cotacao</span>
+                <p class="text-xs text-gray-500">Criar orcamento para cliente</p>
             </a>
             <a href="{{ url_for('new_client') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
                 <span class="font-medium text-sm">Cadastrar Cliente</span>
                 <p class="text-xs text-gray-500">Adicionar novo cliente</p>
             </a>
             <a href="{{ url_for('quotes', status='sent') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
-                <span class="font-medium text-sm">Cotações Enviadas</span>
-                <p class="text-xs text-gray-500">Aguardando aprovação</p>
+                <span class="font-medium text-sm">Cotacoes Enviadas</span>
+                <p class="text-xs text-gray-500">Aguardando aprovacao</p>
+            </a>
+            <a href="{{ url_for('orders') }}" class="block w-full text-left px-4 py-3 rounded-lg bg-white border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all">
+                <span class="font-medium text-sm">Ver Pedidos</span>
+                <p class="text-xs text-gray-500">Gerenciar todos os pedidos</p>
             </a>
         </div>
     </div>
-    
-    <div class="col-span-2 bg-white p-6 rounded-xl shadow-sm">
-        <h3 class="font-serif text-lg font-bold text-primary mb-4">Últimas Cotações</h3>
+</div>
+
+<div class="grid gap-4 lg:grid-cols-2 mt-6">
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Ultimas Cotacoes</h3>
         <div class="space-y-4">
             {% if quotes %}
                 {% for quote in quotes[:5] %}
@@ -109,69 +234,166 @@
                 </a>
                 {% endfor %}
             {% else %}
-                <p class="text-gray-500 text-sm text-center py-4">Nenhuma cotação encontrada</p>
+                <p class="text-gray-500 text-sm text-center py-4">Nenhuma cotacao encontrada</p>
             {% endif %}
         </div>
         <a href="{{ url_for('quotes') }}" class="block text-center text-primary text-sm font-medium mt-4 hover:underline">
-            Ver todas as cotações →
+            Ver todas as cotacoes
+        </a>
+    </div>
+    
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h3 class="font-serif text-lg font-bold text-primary mb-4">Ultimos Pedidos</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-sand/30">
+                    <tr>
+                        <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Pedido</th>
+                        <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                        <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Valor</th>
+                        <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for order in orders[:5] %}
+                    <tr class="hover:bg-sand/20">
+                        <td class="px-4 py-3">
+                            <a href="{{ url_for('view_order', id=order.id) }}" class="font-medium text-primary hover:underline">
+                                {{ order.order_number }}
+                            </a>
+                        </td>
+                        <td class="px-4 py-3 text-sm">{{ order.get_client_name() }}</td>
+                        <td class="px-4 py-3 text-sm font-medium">R$ {{ "%.2f"|format(order.total_value or 0) }}</td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                {% if order.status == 'delivered' %}bg-emerald-100 text-emerald-700
+                                {% elif order.status == 'production' %}bg-yellow-100 text-yellow-700
+                                {% elif order.status == 'ready' %}bg-green-100 text-green-700
+                                {% elif order.status == 'shipping' %}bg-purple-100 text-purple-700
+                                {% else %}bg-blue-100 text-blue-700{% endif %}">
+                                {% if order.status == 'created' %}Novo
+                                {% elif order.status == 'production' %}Producao
+                                {% elif order.status == 'ready' %}Pronto
+                                {% elif order.status == 'shipping' %}Enviado
+                                {% elif order.status == 'delivered' %}Entregue
+                                {% else %}{{ order.status }}{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                            Nenhum pedido encontrado
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ url_for('orders') }}" class="block text-center text-primary text-sm font-medium mt-4 hover:underline">
+            Ver todos os pedidos
         </a>
     </div>
 </div>
 
-<div class="bg-white p-6 rounded-xl shadow-sm mt-6">
-    <h3 class="font-serif text-lg font-bold text-primary mb-4">Últimos Pedidos</h3>
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead class="bg-sand/30">
-                <tr>
-                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Pedido</th>
-                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Valor</th>
-                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="text-left px-4 py-2 text-xs font-medium text-gray-500 uppercase">Entrega</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                {% for order in orders[:5] %}
-                <tr class="hover:bg-sand/20">
-                    <td class="px-4 py-3">
-                        <a href="{{ url_for('view_order', id=order.id) }}" class="font-medium text-primary hover:underline">
-                            {{ order.order_number }}
-                        </a>
-                    </td>
-                    <td class="px-4 py-3 text-sm">{{ order.get_client_name() }}</td>
-                    <td class="px-4 py-3 text-sm font-medium">R$ {{ "%.2f"|format(order.total_value or 0) }}</td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                            {% if order.status == 'delivered' %}bg-emerald-100 text-emerald-700
-                            {% elif order.status == 'production' %}bg-yellow-100 text-yellow-700
-                            {% elif order.status == 'ready' %}bg-green-100 text-green-700
-                            {% elif order.status == 'shipping' %}bg-purple-100 text-purple-700
-                            {% else %}bg-blue-100 text-blue-700{% endif %}">
-                            {% if order.status == 'created' %}Novo
-                            {% elif order.status == 'production' %}Produção
-                            {% elif order.status == 'ready' %}Pronto
-                            {% elif order.status == 'shipping' %}Enviado
-                            {% elif order.status == 'delivered' %}Entregue
-                            {% else %}{{ order.status }}{% endif %}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">
-                        {{ order.delivery_date_estimated.strftime('%d/%m/%Y') if order.delivery_date_estimated else '-' }}
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                        Nenhum pedido encontrado
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <a href="{{ url_for('orders') }}" class="block text-center text-primary text-sm font-medium mt-4 hover:underline">
-        Ver todos os pedidos →
-    </a>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ordersData = {{ metrics.orders_by_month | tojson }};
+    const ordersStatusData = {{ metrics.orders_by_status | tojson }};
+    const quotesStatusData = {{ metrics.quotes_by_status | tojson }};
+    
+    new Chart(document.getElementById('ordersChart'), {
+        type: 'bar',
+        data: {
+            labels: ordersData.map(d => d.month + '/' + d.year),
+            datasets: [{
+                label: 'Pedidos',
+                data: ordersData.map(d => d.orders),
+                backgroundColor: 'rgba(82, 11, 27, 0.8)',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+    
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: ordersData.map(d => d.month + '/' + d.year),
+            datasets: [{
+                label: 'Faturamento',
+                data: ordersData.map(d => d.revenue),
+                borderColor: 'rgba(82, 11, 27, 1)',
+                backgroundColor: 'rgba(82, 11, 27, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+    
+    new Chart(document.getElementById('ordersStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Novos', 'Producao', 'Prontos', 'Enviados', 'Entregues', 'Cancelados'],
+            datasets: [{
+                data: [
+                    ordersStatusData.created,
+                    ordersStatusData.production,
+                    ordersStatusData.ready,
+                    ordersStatusData.shipping,
+                    ordersStatusData.delivered,
+                    ordersStatusData.cancelled
+                ],
+                backgroundColor: [
+                    '#3B82F6',
+                    '#F59E0B',
+                    '#10B981',
+                    '#8B5CF6',
+                    '#059669',
+                    '#EF4444'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+    
+    new Chart(document.getElementById('quotesStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Rascunho', 'Enviadas', 'Aprovadas', 'Convertidas', 'Rejeitadas'],
+            datasets: [{
+                data: [
+                    quotesStatusData.draft,
+                    quotesStatusData.sent,
+                    quotesStatusData.approved,
+                    quotesStatusData.converted,
+                    quotesStatusData.rejected
+                ],
+                backgroundColor: [
+                    '#9CA3AF',
+                    '#3B82F6',
+                    '#10B981',
+                    '#520B1B',
+                    '#EF4444'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+</script>
 {% endblock %}

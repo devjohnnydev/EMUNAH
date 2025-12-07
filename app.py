@@ -49,11 +49,31 @@ MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB max file size
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 
-# Create upload folder if it doesn't exist
+# Create upload folders if they don't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+PRINTS_UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads', 'prints')
+os.makedirs(PRINTS_UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_print_image(file, print_id):
+    """Save uploaded image for a print and return the relative path"""
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        ext = filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"print_{print_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        filepath = os.path.join(PRINTS_UPLOAD_FOLDER, unique_filename)
+        file.save(filepath)
+        return f"uploads/prints/{unique_filename}"
+    return None
+
+def delete_print_image(image_path):
+    """Delete a print image file"""
+    if image_path and image_path.startswith('uploads/prints/'):
+        full_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', image_path)
+        if os.path.exists(full_path):
+            os.remove(full_path)
 
 def save_quote_image(file, quote_id):
     """Save uploaded image for a quote and return the relative path"""
@@ -647,17 +667,114 @@ def load_user(user_id):
 # ==================== HELPERS ====================
 
 def get_dashboard_metrics():
+    from sqlalchemy import extract, func
+    
     total_revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_value), 0)).filter(Order.status == 'delivered').scalar()
     completed_orders = Order.query.filter_by(status='delivered').count()
     pending_quotes = Quote.query.filter(Quote.status.in_(['draft', 'pending', 'sent'])).count()
     avg_ticket = db.session.query(db.func.coalesce(db.func.avg(Order.total_value), 0)).filter(Order.status == 'delivered').scalar()
     orders_in_production = Order.query.filter_by(status='production').count()
+    
+    total_quotes = Quote.query.count()
+    total_orders = Order.query.count()
+    total_clients = Client.query.count()
+    total_suppliers = Supplier.query.count()
+    total_products = Product.query.filter_by(active=True).count()
+    
+    approved_quotes = Quote.query.filter(Quote.status.in_(['approved', 'converted'])).count()
+    conversion_rate = (approved_quotes / total_quotes * 100) if total_quotes > 0 else 0
+    
+    pending_orders = Order.query.filter(Order.status.in_(['created', 'production', 'ready'])).count()
+    shipped_orders = Order.query.filter_by(status='shipping').count()
+    
+    today = datetime.utcnow()
+    start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    start_of_week = today - timedelta(days=today.weekday())
+    start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    revenue_this_month = db.session.query(db.func.coalesce(db.func.sum(Order.total_value), 0)).filter(
+        Order.status == 'delivered',
+        Order.delivered_at >= start_of_month
+    ).scalar()
+    
+    orders_this_month = Order.query.filter(Order.created_at >= start_of_month).count()
+    orders_this_week = Order.query.filter(Order.created_at >= start_of_week).count()
+    quotes_this_month = Quote.query.filter(Quote.created_at >= start_of_month).count()
+    quotes_this_week = Quote.query.filter(Quote.created_at >= start_of_week).count()
+    
+    orders_by_month = []
+    for i in range(5, -1, -1):
+        month_start = (today.replace(day=1) - timedelta(days=30*i)).replace(day=1)
+        if i > 0:
+            month_end = (month_start + timedelta(days=32)).replace(day=1)
+        else:
+            month_end = today + timedelta(days=1)
+        
+        count = Order.query.filter(
+            Order.created_at >= month_start,
+            Order.created_at < month_end
+        ).count()
+        
+        revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_value), 0)).filter(
+            Order.status == 'delivered',
+            Order.delivered_at >= month_start,
+            Order.delivered_at < month_end
+        ).scalar()
+        
+        orders_by_month.append({
+            'month': month_start.strftime('%b'),
+            'year': month_start.year,
+            'orders': count,
+            'revenue': float(revenue) if revenue else 0
+        })
+    
+    orders_by_status = {
+        'created': Order.query.filter_by(status='created').count(),
+        'production': Order.query.filter_by(status='production').count(),
+        'ready': Order.query.filter_by(status='ready').count(),
+        'shipping': Order.query.filter_by(status='shipping').count(),
+        'delivered': Order.query.filter_by(status='delivered').count(),
+        'cancelled': Order.query.filter_by(status='cancelled').count()
+    }
+    
+    quotes_by_status = {
+        'draft': Quote.query.filter_by(status='draft').count(),
+        'sent': Quote.query.filter_by(status='sent').count(),
+        'approved': Quote.query.filter_by(status='approved').count(),
+        'converted': Quote.query.filter_by(status='converted').count(),
+        'rejected': Quote.query.filter_by(status='rejected').count()
+    }
+    
+    total_paid = db.session.query(db.func.coalesce(db.func.sum(Order.paid_value), 0)).scalar()
+    total_pending_payment = db.session.query(
+        db.func.coalesce(db.func.sum(Order.total_value - Order.paid_value), 0)
+    ).filter(Order.status.in_(['created', 'production', 'ready', 'shipping'])).scalar()
+    
     return {
         'total_revenue': float(total_revenue) if total_revenue else 0,
         'completed_orders': completed_orders,
         'pending_quotes': pending_quotes,
         'average_ticket': float(avg_ticket) if avg_ticket else 0,
-        'orders_in_production': orders_in_production
+        'orders_in_production': orders_in_production,
+        'total_quotes': total_quotes,
+        'total_orders': total_orders,
+        'total_clients': total_clients,
+        'total_suppliers': total_suppliers,
+        'total_products': total_products,
+        'approved_quotes': approved_quotes,
+        'conversion_rate': round(conversion_rate, 1),
+        'pending_orders': pending_orders,
+        'shipped_orders': shipped_orders,
+        'revenue_this_month': float(revenue_this_month) if revenue_this_month else 0,
+        'orders_this_month': orders_this_month,
+        'orders_this_week': orders_this_week,
+        'quotes_this_month': quotes_this_month,
+        'quotes_this_week': quotes_this_week,
+        'orders_by_month': orders_by_month,
+        'orders_by_status': orders_by_status,
+        'quotes_by_status': quotes_by_status,
+        'total_paid': float(total_paid) if total_paid else 0,
+        'total_pending_payment': float(total_pending_payment) if total_pending_payment else 0
     }
 
 
@@ -1350,10 +1467,12 @@ def new_print():
     if request.method == 'POST':
         colors = request.form.get('colors', '').split(',')
         positions = request.form.get('positions', '').split(',')
+        image_source = request.form.get('image_source', 'url')
+        
         print_item = Print(
             name=request.form.get('name'),
             description=request.form.get('description'),
-            file_url=request.form.get('file_url'),
+            file_url=request.form.get('file_url') if image_source == 'url' else None,
             colors=[c.strip() for c in colors if c.strip()],
             positions=[p.strip() for p in positions if p.strip()],
             technique=request.form.get('technique', 'silk'),
@@ -1362,6 +1481,15 @@ def new_print():
         )
         db.session.add(print_item)
         db.session.commit()
+        
+        if image_source == 'upload' and 'print_image' in request.files:
+            file = request.files['print_image']
+            if file and file.filename:
+                image_path = save_print_image(file, print_item.id)
+                if image_path:
+                    print_item.file_url = image_path
+                    db.session.commit()
+        
         flash('Estampa criada com sucesso!', 'success')
         return redirect(url_for('prints'))
     return render_template('print_form.html', print=None)
@@ -1374,14 +1502,31 @@ def edit_print(id):
     if request.method == 'POST':
         colors = request.form.get('colors', '').split(',')
         positions = request.form.get('positions', '').split(',')
+        image_source = request.form.get('image_source', 'url')
+        
         print_item.name = request.form.get('name')
         print_item.description = request.form.get('description')
-        print_item.file_url = request.form.get('file_url')
         print_item.colors = [c.strip() for c in colors if c.strip()]
         print_item.positions = [p.strip() for p in positions if p.strip()]
         print_item.technique = request.form.get('technique', 'silk')
         print_item.dimensions = request.form.get('dimensions')
         print_item.active = request.form.get('active') == 'on'
+        
+        if image_source == 'url':
+            old_image = print_item.file_url
+            print_item.file_url = request.form.get('file_url')
+            if old_image and old_image.startswith('uploads/prints/') and old_image != print_item.file_url:
+                delete_print_image(old_image)
+        elif image_source == 'upload' and 'print_image' in request.files:
+            file = request.files['print_image']
+            if file and file.filename:
+                old_image = print_item.file_url
+                if old_image and old_image.startswith('uploads/prints/'):
+                    delete_print_image(old_image)
+                image_path = save_print_image(file, print_item.id)
+                if image_path:
+                    print_item.file_url = image_path
+        
         db.session.commit()
         flash('Estampa atualizada com sucesso!', 'success')
         return redirect(url_for('prints'))
@@ -1392,6 +1537,8 @@ def edit_print(id):
 @login_required
 def delete_print(id):
     print_item = Print.query.get_or_404(id)
+    if print_item.file_url and print_item.file_url.startswith('uploads/prints/'):
+        delete_print_image(print_item.file_url)
     db.session.delete(print_item)
     db.session.commit()
     flash('Estampa excluída com sucesso!', 'success')
