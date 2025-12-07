@@ -1,9 +1,10 @@
 #!/bin/bash
 # EMUNAH - Railway Deployment Script
+# Este script prepara o ambiente e executa o deploy completo
 
 echo "================================================"
 echo "EMUNAH - Sistema de Vendas e Orçamentos"
-echo "Railway Deployment Script"
+echo "Railway Deployment Script v2.0"
 echo "================================================"
 
 # Check if Python is installed
@@ -13,39 +14,42 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 # Install dependencies
-echo "Installing Python dependencies..."
-pip install -r requirements.txt
+echo ""
+echo "[1/3] Instalando dependências Python..."
+pip install -r requirements.txt --quiet
 
-# Run database migrations
-echo "Running database migrations..."
-python3 -c "
-from app import app, db, init_db
-with app.app_context():
-    db.create_all()
-    print('Database tables created successfully!')
-"
+# Run the complete deploy script
+echo ""
+echo "[2/3] Executando script de deploy..."
+python3 deploy_railway.py
 
-# Initialize database with sample data if needed
-echo "Initializing database..."
-python3 -c "
-from app import init_db
-init_db()
-"
+# Seed prints if needed
+echo ""
+echo "[3/3] Verificando estampas evangélicas..."
+python3 seed_prints.py
 
 echo ""
 echo "================================================"
-echo "Deployment preparation complete!"
+echo "DEPLOY CONCLUÍDO!"
+echo "================================================"
 echo ""
-echo "Make sure you have set the following environment variables in Railway:"
-echo "  - DATABASE_URL (PostgreSQL connection string)"
-echo "  - SECRET_KEY or SESSION_SECRET (for session security)"
-echo "  - ADMIN_EMAIL (admin user email)"
-echo "  - ADMIN_PASSWORD (admin user password)"
+echo "Variáveis de ambiente necessárias no Railway:"
 echo ""
-echo "Optional email configuration:"
-echo "  - MAIL_SERVER (SMTP server, default: smtp.gmail.com)"
-echo "  - MAIL_PORT (SMTP port, default: 587)"
-echo "  - MAIL_USERNAME (SMTP username)"
-echo "  - MAIL_PASSWORD (SMTP password or app password)"
-echo "  - MAIL_DEFAULT_SENDER (sender email address)"
+echo "OBRIGATÓRIAS:"
+echo "  - DATABASE_URL (PostgreSQL - adicionado automaticamente)"
+echo "  - SECRET_KEY ou SESSION_SECRET (segurança de sessão)"
+echo ""
+echo "ADMIN (recomendadas):"
+echo "  - ADMIN_EMAIL (email do administrador)"
+echo "  - ADMIN_PASSWORD (senha do administrador)"
+echo "  - ADMIN_NAME (nome do administrador)"
+echo "  - ADMIN_PHONE (telefone do administrador)"
+echo ""
+echo "EMAIL (opcionais):"
+echo "  - MAIL_SERVER (servidor SMTP, padrão: smtp.gmail.com)"
+echo "  - MAIL_PORT (porta SMTP, padrão: 587)"
+echo "  - MAIL_USERNAME (usuário SMTP)"
+echo "  - MAIL_PASSWORD (senha SMTP ou app password)"
+echo "  - MAIL_DEFAULT_SENDER (email remetente)"
+echo ""
 echo "================================================"
