@@ -10,7 +10,7 @@ packages = ["fontconfig", "freetype", "ghostscript", "glib", "harfbuzz", "lcms2"
 deploymentTarget = "autoscale"
 build = ["npm", "run", "build"]
 publicDir = "dist/public"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "main:app"]
 
 [[ports]]
 localPort = 5000
