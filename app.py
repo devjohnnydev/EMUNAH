@@ -1811,6 +1811,29 @@ def delete_user(id):
     return redirect(url_for('users'))
 
 
+# ==================== HEALTH CHECK ====================
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Railway/Docker deployments."""
+    try:
+        # Try a simple database query to verify connection
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected',
+            'timestamp': datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        logging.error(f"Health check failed: {e}")
+        return jsonify({
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'error': str(e),
+            'timestamp': datetime.utcnow().isoformat()
+        }), 503
+
+
 # ==================== API ====================
 
 @app.route('/api/metrics')
